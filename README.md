@@ -30,7 +30,7 @@ Workstation/Fusion and unmanaged KVM (a host that is not OLVM) are not supported
 
 ## Quick start
 
-[![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?zipUrl=https://github.com/RichardORCL/OCI-Offline-Migration-Assistant/raw/12e1afb0165acf9497d06b8d899652906a488695/oci-offline-migration-assistant-stack.zip)
+[![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?zipUrl=https://github.com/RichardORCL/OCI-Offline-Migration-Assistant/raw/3088895285ef6622dc61bb92bceb1c1e3bf1c0e6/oci-offline-migration-assistant-stack.zip)
 
 The button uses a verified stack revision. If an already-open Create stack page shows an older
 description, close it and open the button again. Existing stacks retain their saved configuration.
