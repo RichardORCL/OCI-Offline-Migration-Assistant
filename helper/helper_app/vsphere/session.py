@@ -187,6 +187,6 @@ class VCenterConnector:
             if _is_tls_failure(exc):
                 raise VCenterError(f"the TLS certificate of {host}:{port} could not be verified ({exc}); untick "
                                    "'Verify the server certificate' for a self-signed or VMCA certificate, or "
-                                   "install its CA on the migration tool VM") from exc
+                                   "install its CA on the assistant VM") from exc
             raise VCenterError(f"cannot connect to vCenter {host}:{port}: {exc}") from exc
         return VCenterSession(si, username, host, port, verify_ssl=verify)

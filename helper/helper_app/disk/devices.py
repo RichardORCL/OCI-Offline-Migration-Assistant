@@ -118,7 +118,7 @@ def wait_for_new_device(
         if now_t - last_log >= 15:
             seen = ", ".join(f"{p} ({s} bytes)" for p, s in sorted(new.items())) or "none"
             log.info(
-                "waiting for a new disk of %s bytes on the migration tool VM (new disks seen: %s)",
+                "waiting for a new disk of %s bytes on the assistant VM (new disks seen: %s)",
                 expected_bytes, seen,
             )
             if on_progress is not None:
@@ -129,6 +129,6 @@ def wait_for_new_device(
         sleep(poll_s)
     seen = ", ".join(f"{p} ({s} bytes)" for p, s in sorted(last.items())) or "none"
     raise RuntimeError(
-        f"no new disk of {expected_bytes} bytes appeared on the migration tool VM within {timeout_s:.0f}s "
+        f"no new disk of {expected_bytes} bytes appeared on the assistant VM within {timeout_s:.0f}s "
         f"(new disks seen: {seen})"
     )

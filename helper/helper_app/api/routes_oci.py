@@ -38,7 +38,7 @@ router = APIRouter(prefix="/api", tags=["oci"], dependencies=[Depends(require_se
 
 @router.get("/oci/buckets", response_model=list[OciBucket])
 async def oci_buckets(request: Request, compartment_id: Optional[str] = None):
-    """Object Storage buckets of a compartment (the migration tool VM's when omitted) for the ISO picker."""
+    """Object Storage buckets of a compartment (the assistant VM's when omitted) for the ISO picker."""
     st = request.app.state
     comp = compartment_id or st.clients.identity_info.compartment_id
     try:

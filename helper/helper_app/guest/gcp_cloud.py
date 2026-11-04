@@ -9,7 +9,7 @@ from helper_app.branding import PREFIX
 from helper_app.guest.initramfs import Skip
 
 CLOUD_CFG_DROPIN = f"99-{PREFIX}-after-gcp.cfg"
-CLOUD_CFG_TEXT = """# added by the OCI Ultimate Migration Tool after migration from Google Cloud
+CLOUD_CFG_TEXT = """# added by the OCI Offline Migration Assistant after migration from Google Cloud
 datasource_list: [ Oracle, NoCloud, ConfigDrive, None ]
 # the migrated server keeps its SSH host identity (cloud-init sees a new instance-id after the move)
 ssh_deletekeys: false

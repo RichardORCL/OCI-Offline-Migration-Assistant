@@ -13,6 +13,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Callable
 
 from helper_app import __version__
+from helper_app.branding import PRODUCT_NAME, PRODUCT_VM_NAME
 from helper_app.config import Settings
 from helper_app.models import Job
 from helper_app.oci.clients import HelperIdentity
@@ -219,14 +220,14 @@ def collect(job: Job, settings: Settings, ident: HelperIdentity, commit: str,
     )
     lo = job.launch_options
     header = [
-        "=== OCI Ultimate Migration Tool - job diagnostics ===",
+        f"=== {PRODUCT_NAME} - job diagnostics ===",
         f"generated: {now().isoformat(timespec='seconds')}",
-        f"migration tool: version {__version__} commit {commit or '-'}",
-        f"migration tool VM: instance {ident.instance_id} compartment {ident.compartment_id} "
+        f"assistant: version {__version__} commit {commit or '-'}",
+        f"assistant VM: instance {ident.instance_id} compartment {ident.compartment_id} "
         f"region {ident.region} AD {ident.availability_domain}",
         f"settings: vcenter_default={settings.vcenter_host or '-'} "
         f"nfc_host_override={settings.nfc_host_override or '-'} seed_bucket={settings.seed_bucket} "
-        f"seed_compartment={settings.seed_compartment_id or '(migration tool VM)'} "
+        f"seed_compartment={settings.seed_compartment_id or f'({PRODUCT_VM_NAME})'} "
         f"max_concurrent_jobs={settings.max_concurrent_jobs} disk_retry_attempts={settings.disk_retry_attempts}",
         "",
         f"job {job.id}: phase={job.phase.value} kind={job.kind} step={job.step or '-'}"
@@ -258,7 +259,7 @@ def collect(job: Job, settings: Settings, ident: HelperIdentity, commit: str,
         "--- job record (JSON) ---",
         json.dumps(job.model_dump(mode="json"), indent=2, sort_keys=True),
         "",
-        f"--- migration tool journal ({settings.update_service}) ---",
+        f"--- assistant service journal ({settings.update_service}) ---",
         journal_excerpt(job, settings.update_service, run),
     ]
     return redact("\n".join(header) + "\n")

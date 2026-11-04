@@ -1,18 +1,18 @@
-# Installing the OCI Migration Tool VM
+# Installing the OCI Offline Migration Assistant VM
 
-The OCI Ultimate Migration Tool runs on one VM in your tenancy, the *OCI Migration Tool VM*.
+The OCI Offline Migration Assistant runs on one VM in your tenancy, the *OCI Offline Migration Assistant VM*.
 
 ## Prerequisites
 
 - An OCI tenancy with a VCN/subnet that administrators' browsers can reach on 8443 (through a VPN, or
-  via a public IP on the Migration Tool VM).
+  via a public IP on the Assistant VM).
 - Permissions to create instances, block volumes, custom images, an Object Storage bucket, a dynamic
   group, a policy and a tag namespace (or an administrator who creates the IAM parts for you, see
   `create_iam`).
-- The Migration Tool VM must be able to reach GitHub to clone the tool's repository
-  [RichardORCL/OCI-UltimateMigrationTool](https://github.com/RichardORCL/OCI-UltimateMigrationTool)
+- The Assistant VM must be able to reach GitHub to clone the tool's repository
+  [RichardORCL/OCI-Offline-Migration-Assistant](https://github.com/RichardORCL/OCI-Offline-Migration-Assistant)
   (and PyPI to install its dependencies). Point `source_git_url` at your own fork if you maintain one.
-- The Migration Tool VM is designed for a **private subnet without a public IP**. Its subnet needs a
+- The Assistant VM is designed for a **private subnet without a public IP**. Its subnet needs a
   route to the Oracle Services Network through a Service Gateway (*All Services in Oracle
   Services Network*: OCI APIs, Object Storage, the instance console connection service used by
   *Remote console*, Oracle yum) and a NAT gateway for GitHub/PyPI and for cloud sources (Azure, AWS,
@@ -43,7 +43,7 @@ a `schema.yaml` for the console form) and also works with a local `terraform app
 ## 1. Option A - deploy with Resource Manager (recommended)
 
 1. Get the stack zip. Either click the **Deploy to Oracle Cloud** button in the
-   [README](https://github.com/RichardORCL/OCI-UltimateMigrationTool#quick-start) (opens *Create stack*
+   [README](https://github.com/RichardORCL/OCI-Offline-Migration-Assistant#quick-start) (opens *Create stack*
    with the zip preloaded, skip step 2), download the committed stack zip from that repository, or
    rebuild it locally with `helper/deploy/package_stack.sh` (`package_stack.ps1` on Windows), which
    writes it to the repository root.
@@ -58,15 +58,15 @@ a `schema.yaml` for the console form) and also works with a local `terraform app
      that holds your VCN when networking is managed separately), VCN, subnet, whether to assign a
      public IP, and the CIDRs of the administrators' networks allowed to reach the web UI. The
      network security group is created in the network compartment.
-   - *OCI Migration Tool VM*: instance name, shape/OCPUs/memory and your SSH public key.
+   - *OCI Offline Migration Assistant VM*: instance name, shape/OCPUs/memory and your SSH public key.
    - *Migration tool service*: git URL + ref to install, seed bucket, default target shape, number of
      parallel migrations.
    - *IAM*: keep **Create IAM resources** on unless an administrator already created the dynamic
-     group/policy/tag namespace; optionally limit the compartment where the Migration Tool may
+     group/policy/tag namespace; optionally limit the compartment where the Offline Migration Assistant may
      create target instances.
 4. Run **Plan**, then **Apply**. Outputs show the UI URL, the availability domain and next steps.
 
-To upgrade the Migration Tool use the **Setup** page in the web UI (see below). Changing the git ref
+To upgrade the Offline Migration Assistant use the **Setup** page in the web UI (see below). Changing the git ref
 in the stack alone does not upgrade an existing VM (cloud-init changes are ignored).
 
 ## 1. Option B - local Terraform
@@ -85,28 +85,28 @@ terraform output helper_ui_url    # prints the UI URL
 - a network security group (in the network compartment, `network_compartment_ocid`) allowing TCP 8443
   (web UI) and 22 (SSH) from `allowed_source_cidrs`, all egress;
 - the `oci-umt-seed-images` Object Storage bucket used while importing seed images;
-- (when `create_iam = true`) the `UltimateMigrationTool` tag namespace, a dynamic group matching the tagged instance
-  in the Migration Tool compartment, and a policy granting it `manage instance-family` /
+- (when `create_iam = true`) the `OfflineMigrationAssistant` tag namespace, a dynamic group matching the tagged instance
+  in the Offline Migration Assistant compartment, and a policy granting it `manage instance-family` /
   `manage volume-family` / `use virtual-network-family` in `policy_scope_compartment_ocid` (default:
   tenancy), plus `manage instance-images` / `compute-image-capability-schema` / volume attachments in
   its own compartment, object access to the seed bucket and `PAR_MANAGE` on that bucket (the image
   import service reads the placeholder through a pre-authenticated request it creates on the
-  Migration Tool's behalf); for *Create OCI instance based on ISO* additionally `read buckets` /
+  Offline Migration Assistant's behalf); for *Create OCI instance based on ISO* additionally `read buckets` /
   `read objects` in the policy scope (the ISO picker) and
   `manage buckets ... where request.permission = 'PAR_MANAGE'` there (the ISO import reads the object
   through a PAR as well);
-- cloud-init that writes the Migration Tool environment file (OCI settings, bucket, default shape,
-  concurrency), installs the Migration Tool (git clone + `pip install`), generates a self-signed
-  certificate, opens 8443 in firewalld and starts the Migration Tool service.
+- cloud-init that writes the Offline Migration Assistant environment file (OCI settings, bucket, default shape,
+  concurrency), installs the Offline Migration Assistant (git clone + `pip install`), generates a self-signed
+  certificate, opens 8443 in firewalld and starts the Offline Migration Assistant service.
 
-**Target instances can only be created in the Migration Tool's AD** because boot volumes are AD-local;
+**Target instances can only be created in the Offline Migration Assistant's AD** because boot volumes are AD-local;
 deploy one stack per AD if you need more.
 
-When `create_iam = false`, an administrator must create beforehand: tag namespace `UltimateMigrationTool` with key
-`role`; a dynamic group matching the Migration Tool instance in its compartment; and the policy
+When `create_iam = false`, an administrator must create beforehand: tag namespace `OfflineMigrationAssistant` with key
+`role`; a dynamic group matching the Offline Migration Assistant instance in its compartment; and the policy
 statements listed in `main.tf`.
 
-The defined tag is `UltimateMigrationTool.role = helper`. Namespace names beginning with `oci` or
+The defined tag is `OfflineMigrationAssistant.role = helper`. Namespace names beginning with `oci` or
 `orcl` are [reserved by Oracle](https://docs.oracle.com/en-us/iaas/Content/Tagging/Tasks/managingtagsandtagnamespaces.htm).
 For an existing Resource Manager stack, upload the updated stack ZIP before running Plan; updating
 the repository does not update a stack's saved Terraform configuration. Review namespace and dynamic
@@ -124,10 +124,10 @@ on **Setup**). If a password is set, unlock with it before the start page.
 
 The start page lists every option (VMware, Hyper-V, OLVM, Nutanix AHV, Proxmox VE, Azure, AWS, Google Cloud, OVA import, ISO, Remote Console,
 export to OVF). Pick one and follow its login or form. Source credentials are entered there, not in
-the stack; one Migration Tool VM can serve several sources and several accounts. The *(i)* buttons
+the stack; one Assistant VM can serve several sources and several accounts. The *(i)* buttons
 next to the cloud cards show how to prepare the service principal, IAM user or service account.
 
-From the Migration Tool VM you can confirm outbound reach to a source, for example:
+From the Assistant VM you can confirm outbound reach to a source, for example:
 
 ```bash
 # VMware
@@ -151,7 +151,7 @@ curl -sI https://ec2.<region>.amazonaws.com | head -1
 curl -sI https://compute.googleapis.com | head -1
 ```
 
-To replace the self-signed certificate, put your own TLS certificate and key in the Migration Tool
+To replace the self-signed certificate, put your own TLS certificate and key in the Offline Migration Assistant
 config directory and restart the service.
 
 ## Configuration reference
@@ -191,7 +191,7 @@ override logging, concurrency and the session timeout at runtime.
 | `HELPER_OCI_AUTH` | `instance_principal` | `config_file` for local development |
 | `HELPER_INSTANCE_ID`, `HELPER_COMPARTMENT_ID`, `HELPER_AVAILABILITY_DOMAIN`, `HELPER_REGION`, `HELPER_TENANCY_ID` | auto | Discovered from the instance metadata service when empty |
 | `HELPER_SEED_BUCKET` | `oci-umt-seed-images` | Bucket for seed image imports |
-| `HELPER_SEED_COMPARTMENT_ID` | Migration Tool compartment | Where seed images are kept |
+| `HELPER_SEED_COMPARTMENT_ID` | Offline Migration Assistant compartment | Where seed images are kept |
 | `HELPER_ISO_IMAGE_COMPARTMENT_ID` | seed compartment | Where custom images imported from installer ISOs are kept |
 | `HELPER_ISO_SOURCE_IMAGE_TYPE` | `VMDK` | `sourceImageType` sent to `CreateImage` for an ISO |
 | `HELPER_DEFAULT_SHAPE` | `VM.Standard.E5.Flex` | Flex shape for target instances |
@@ -200,20 +200,20 @@ override logging, concurrency and the session timeout at runtime.
 | `HELPER_LAUNCH_TIMEOUT_S` / `HELPER_VOLUME_TIMEOUT_S` / `HELPER_IMAGE_IMPORT_TIMEOUT_S` | 1800 / 900 / 3600 | Waiter timeouts |
 | `HELPER_SKIP_ZERO_GRAINS` | `true` | Do not write all-zero grains (fresh volumes read as zero) |
 | `HELPER_CONSOLE_IDLE_TIMEOUT_S` / `HELPER_CONSOLE_CONNECT_TIMEOUT_S` | 600 / 120 | *Remote console*: idle delete and connect timeouts |
-| `HELPER_DB_PATH` | on the Migration Tool VM | Job database |
+| `HELPER_DB_PATH` | on the Assistant VM | Job database |
 | `HELPER_TLS_CERT_FILE` / `HELPER_TLS_KEY_FILE` | – | TLS material for 8443 |
-| `HELPER_LOG_LEVEL` | `INFO` | Migration Tool log level (service journal); changeable on *Setup* |
+| `HELPER_LOG_LEVEL` | `INFO` | Offline Migration Assistant log level (service journal); changeable on *Setup* |
 | `HELPER_OCI_LOG_REQUESTS` | `false` | Redacted OCI SDK diagnostics; raw HTTP dumps disabled; changeable on *Setup* |
-| `HELPER_RUNTIME_SETTINGS_PATH` | on the Migration Tool VM | Where *Setup* page changes are persisted |
-| `HELPER_UI_PASSWORD_HASH_PATH` | on the Migration Tool VM | Optional web UI password (scrypt hash). Missing = no lock; unreadable/empty files fail closed. Offered on first use and changeable on *Setup* |
-| `HELPER_UPDATE_SOURCE_DIR` / `HELPER_UPDATE_VENV_DIR` | on the Migration Tool VM | Git checkout and virtualenv used by the self-update |
-| `HELPER_UPDATE_SERVICE` / `HELPER_UPDATE_LOG_PATH` | the Migration Tool service / the update log | service restarted after an update; update log shown in the UI |
+| `HELPER_RUNTIME_SETTINGS_PATH` | on the Assistant VM | Where *Setup* page changes are persisted |
+| `HELPER_UI_PASSWORD_HASH_PATH` | on the Assistant VM | Optional web UI password (scrypt hash). Missing = no lock; unreadable/empty files fail closed. Offered on first use and changeable on *Setup* |
+| `HELPER_UPDATE_SOURCE_DIR` / `HELPER_UPDATE_VENV_DIR` | on the Assistant VM | Git checkout and virtualenv used by the self-update |
+| `HELPER_UPDATE_SERVICE` / `HELPER_UPDATE_LOG_PATH` | the Offline Migration Assistant service / the update log | service restarted after an update; update log shown in the UI |
 
-## Updating the Migration Tool
+## Updating the Offline Migration Assistant
 
-The **Setup** tab compares the installed commit with the head of the branch the Migration Tool was
+The **Setup** tab compares the installed commit with the head of the branch the Offline Migration Assistant was
 installed from (`source_git_ref`) and offers **Update now**. The update fetches the new version,
-installs it and restarts the Migration Tool service. All web sessions end with the restart; the page
+installs it and restarts the Offline Migration Assistant service. All web sessions end with the restart; the page
 waits for the new version and returns to the start page (or the UI password prompt if one is set).
 The update is refused while migrations are running (the restart would abort them) unless you confirm
 **Update anyway** on Setup. After a forced restart, cancel each failed job so its OCI volumes are
@@ -236,7 +236,7 @@ put back.
 - The job history can be trimmed from the *Setup* tab: *Delete failed jobs* removes `FAILED` and
   `CANCELLED` records, *Delete all jobs* every finished record. Running or queued jobs are never
   deleted, and only the records go - OCI resources of a failed job are not cleaned up by this.
-- The Migration Tool supports up to 32 attached volumes at once, which bounds
+- The Offline Migration Assistant supports up to 32 attached volumes at once, which bounds
   `HELPER_MAX_CONCURRENT_JOBS`.
 - **Web UI password:** the first visit offers to set one; change or remove it on *Setup*. If you
-  forget it, SSH to the VM, remove the UI password hash file and restart the Migration Tool service.
+  forget it, SSH to the VM, remove the UI password hash file and restart the Offline Migration Assistant service.

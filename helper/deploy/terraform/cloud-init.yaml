@@ -1,5 +1,5 @@
 #cloud-config
-# Installs the OCI Ultimate Migration Tool (web UI + migration engine) on Oracle Linux 9 from source
+# Installs the OCI Offline Migration Assistant (web UI + migration engine) on Oracle Linux 9 from source
 # (git + pip into a virtualenv), generates a self-signed certificate and runs it as the vc-oci-helper
 # systemd unit.
 package_update: true
@@ -53,7 +53,7 @@ write_files:
     permissions: "0644"
     content: |
       [Unit]
-      Description=OCI Ultimate Migration Tool
+      Description=OCI Offline Migration Assistant
       After=network-online.target
       Wants=network-online.target
 
@@ -75,7 +75,7 @@ runcmd:
     IP=$(hostname -I | awk '{print $1}')
     openssl req -x509 -newkey rsa:2048 -sha256 -days 1095 -nodes \
       -keyout /etc/vc-oci-helper/server.key -out /etc/vc-oci-helper/server.crt \
-      -subj "/CN=$${HOSTNAME_FQDN}/O=OCI Ultimate Migration Tool" \
+      -subj "/CN=$${HOSTNAME_FQDN}/O=OCI Offline Migration Assistant" \
       -addext "subjectAltName=DNS:$${HOSTNAME_FQDN},IP:$${IP}"
     chmod 644 /etc/vc-oci-helper/server.crt
     chmod 600 /etc/vc-oci-helper/server.key

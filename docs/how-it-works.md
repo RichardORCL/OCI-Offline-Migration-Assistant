@@ -1,6 +1,6 @@
-# How the OCI Ultimate Migration Tool works
+# How the OCI Offline Migration Assistant works
 
-Technical overview of the OCI Ultimate Migration Tool: what happens on the OCI side for every migration,
+Technical overview of the OCI Offline Migration Assistant: what happens on the OCI side for every migration,
 how each source platform is read, how the extra features work, and the network flows. For the
 step-by-step internals see [architecture.md](architecture.md); for the guest OS / launch option / shape
 tables see [os-mapping.md](os-mapping.md); for known limitations and troubleshooting see
@@ -20,7 +20,7 @@ Contents
 
 ## The OCI side, shared by all migrations
 
-Everything runs on a single VM in OCI, the **OCI Migration Tool VM**. Migrations run **without VDDK and
+Everything runs on a single VM in OCI, the **OCI Offline Migration Assistant VM**. Migrations run **without VDDK and
 without temporary storage on that VM**: source disks are streamed straight onto OCI block volumes that
 are attached to the tool VM while the copy runs. Every source (VMware, Hyper-V, OLVM, Nutanix AHV, Proxmox VE, Azure, AWS, Google Cloud, OVA)
 ends in the same pipeline; only the way the source disks are read differs. Hyper-V, OLVM, Nutanix AHV and Proxmox VE are read the same way as
@@ -58,7 +58,7 @@ start. After the OCI side is prepared (steps 1 and 2 above) the tool:
 ```mermaid
 sequenceDiagram
     participant B as Browser
-    participant H as Migration Tool VM (OCI)
+    participant H as Assistant VM (OCI)
     participant VC as vCenter / ESXi
     participant OCI as OCI APIs
     B->>H: log in with vCenter credentials
@@ -124,7 +124,7 @@ After the OCI side is prepared the tool:
 ```mermaid
 sequenceDiagram
     participant B as Browser
-    participant H as Migration Tool VM (OCI)
+    participant H as Assistant VM (OCI)
     participant E as OLVM engine
     participant OCI as OCI APIs
     B->>H: Log in with engine URL and password
@@ -171,7 +171,7 @@ After the OCI side is prepared the tool:
 ```mermaid
 sequenceDiagram
     participant B as Browser
-    participant H as Migration Tool VM (OCI)
+    participant H as Assistant VM (OCI)
     participant HV as Hyper-V host
     participant OCI as OCI APIs
     B->>H: Log in with host, user and password
@@ -239,7 +239,7 @@ After the OCI side is prepared the tool:
 ```mermaid
 sequenceDiagram
     participant B as Browser
-    participant H as Migration Tool VM (OCI)
+    participant H as Assistant VM (OCI)
     participant P as Prism Central / Element
     participant OCI as OCI APIs
     B->>H: Log in with Prism URL, user and password
@@ -312,7 +312,7 @@ After the OCI side is prepared the tool:
 ```mermaid
 sequenceDiagram
     participant B as Browser
-    participant H as Migration Tool VM (OCI)
+    participant H as Assistant VM (OCI)
     participant P as Proxmox API (8006)
     participant N as Proxmox node (SSH)
     participant OCI as OCI APIs
@@ -368,7 +368,7 @@ fails or is cancelled; an expired SAS (`HELPER_AZURE_SAS_DURATION_S`, default 24
 ```mermaid
 sequenceDiagram
     participant B as Browser
-    participant H as Migration Tool VM (OCI)
+    participant H as Assistant VM (OCI)
     participant AAD as Entra ID
     participant ARM as Azure Resource Manager
     participant Blob as Azure page blob (SAS)
@@ -430,7 +430,7 @@ snapshots are deleted when the job finishes, fails or is cancelled.
 ```mermaid
 sequenceDiagram
     participant B as Browser
-    participant H as Migration Tool VM (OCI)
+    participant H as Assistant VM (OCI)
     participant EC2 as EC2 / STS API
     participant EBS as EBS Direct API
     participant OCI as OCI APIs
@@ -489,7 +489,7 @@ the export objects, the Cloud Build scratch data (`<project>-daisy-bkt-<region>`
 ```mermaid
 sequenceDiagram
     participant B as Browser
-    participant H as Migration Tool VM (OCI)
+    participant H as Assistant VM (OCI)
     participant GCE as Compute Engine API
     participant CB as Cloud Build
     participant GCS as Cloud Storage (export bucket)
@@ -660,9 +660,9 @@ the *Maximum compatibility* preset (IDE + E1000) - see [limitations.md](limitati
 | Migration tool -> Oracle Linux yum repositories, GitHub, PyPI | TCP 443 | Installation and *Setup -> Update now* (`dnf`, `git`, `pip`). The Oracle yum servers are in the Oracle Services Network (Service Gateway); GitHub and PyPI need a NAT gateway |
 | Administrator -> migration tool | TCP 22 | Optional SSH administration, same `allowed_source_cidrs` as the web UI |
 
-All flows are TCP and are initiated by the browser or by the migration tool VM; nothing has to reach into
+All flows are TCP and are initiated by the browser or by the assistant VM; nothing has to reach into
 your on-premises network from OCI, and the target instances need no inbound ports. The Resource Manager
 stack creates a network security group with the 8443/22 ingress rules for the administrators' CIDRs and
-unrestricted egress; the migration tool VM's subnet route table must provide the paths above
+unrestricted egress; the assistant VM's subnet route table must provide the paths above
 (VPN/FastConnect to on-premises VMware if you use it, Service Gateway and NAT gateway to OCI and the
 internet for cloud sources).

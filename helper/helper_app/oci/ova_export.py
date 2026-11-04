@@ -60,7 +60,7 @@ class OvaExporter:
             if check_cancel:
                 check_cancel()
             if not disk.device:
-                raise OciError(f"disk {disk.index} is not attached to the migration tool VM")
+                raise OciError(f"disk {disk.index} is not attached to the assistant VM")
             href = f"{name}-disk{i + 1}.vmdk"
             object_name = f"{prefix}/{href}"
             disk.status = DiskStatus.COPYING

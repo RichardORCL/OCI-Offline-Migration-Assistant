@@ -15,6 +15,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "helper"))
 
+from helper_app.branding import STACK_ZIP_FILENAME  # noqa: E402
 from helper_app.config import Settings  # noqa: E402
 
 STACK_FILES = ("main.tf", "variables.tf", "outputs.tf", "schema.yaml", "cloud-init.yaml")
@@ -38,7 +39,7 @@ def main() -> None:
     parser.add_argument("--write", action="store_true")
     args = parser.parse_args()
     config_path = ROOT / "docs/configuration-defaults.md"
-    zip_path = ROOT / "oci-ultimate-migration-tool-stack.zip"
+    zip_path = ROOT / "oci-offline-migration-assistant-stack.zip"
     source = ROOT / "helper/deploy/terraform"
     if args.write:
         config_path.write_text(configuration_table(), encoding="utf-8", newline="\n")

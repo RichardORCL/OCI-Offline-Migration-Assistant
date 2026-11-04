@@ -8,13 +8,13 @@ variable "region" {
 }
 
 variable "compartment_ocid" {
-  description = "Compartment for the OCI Migration Tool VM, the seed image bucket and (by default) the seed images"
+  description = "Compartment for the OCI Offline Migration Assistant VM, the seed image bucket and (by default) the seed images"
   type        = string
 }
 
 # ----------------------------------------------------------------------------- placement
 variable "availability_domain" {
-  description = "AD of the OCI Migration Tool VM. Target instances can only be created in this AD (boot volumes are AD-local)."
+  description = "AD of the OCI Offline Migration Assistant VM. Target instances can only be created in this AD (boot volumes are AD-local)."
   type        = string
 }
 
@@ -25,17 +25,17 @@ variable "network_compartment_ocid" {
 }
 
 variable "vcn_ocid" {
-  description = "VCN containing the migration tool VM subnet"
+  description = "VCN containing the assistant VM subnet"
   type        = string
 }
 
 variable "subnet_ocid" {
-  description = "Subnet for the OCI Migration Tool VM; must route to vCenter (VPN/FastConnect) and be reachable from the administrators' browsers"
+  description = "Subnet for the OCI Offline Migration Assistant VM; must route to vCenter (VPN/FastConnect) and be reachable from the administrators' browsers"
   type        = string
 }
 
 variable "assign_public_ip" {
-  description = "Give the migration tool VM a public IP (only when administrators reach the web UI over the internet)"
+  description = "Give the assistant VM a public IP (only when administrators reach the web UI over the internet)"
   type        = bool
   default     = false
 }
@@ -96,7 +96,7 @@ variable "max_concurrent_jobs" {
 variable "source_git_url" {
   description = "Git repository containing the migration tool; cloned on the VM and installed with pip"
   type        = string
-  default     = "https://github.com/RichardORCL/OCI-UltimateMigrationTool.git"
+  default     = "https://github.com/RichardORCL/OCI-Offline-Migration-Assistant.git"
 }
 
 variable "source_git_ref" {

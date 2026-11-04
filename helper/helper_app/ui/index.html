@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>OCI Ultimate Migration Tool</title>
+  <title>OCI Offline Migration Assistant</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -11,7 +11,7 @@
     <a href="#/start" class="topbar-home" id="home-link" title="Start page" aria-label="Home">
       <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
     </a>
-    <div class="brand">OCI Ultimate Migration Tool</div>
+    <div class="brand">OCI Offline Migration Assistant</div>
     <div class="topbar-spacer"></div>
     <nav id="nav" class="topbar-nav" hidden>
       <a href="#/jobs" data-nav="jobs">Jobs</a>
@@ -39,7 +39,7 @@
         <a class="card start-choice" href="#/login" id="start-vmware">
           <h3>VMware vCenter or ESXi</h3>
           <p>Migrate virtual machines from vSphere to OCI: log in to vCenter (or a standalone ESXi host), pick the VMs,
-            and the migration tool copies their disks into OCI instances.</p>
+            and the assistant copies their disks into OCI instances.</p>
           <span class="button primary">Log in to vCenter</span>
         </a>
         <a class="card start-choice" href="#/olvm/login" id="start-olvm">
@@ -57,13 +57,13 @@
         <a class="card start-choice" href="#/nutanix/login" id="start-nutanix">
           <h3>Nutanix AHV</h3>
           <p>Migrate virtual machines from Nutanix AHV to OCI: log in to Prism Central or Prism Element, pick the VMs,
-            and the migration tool shuts them down and copies their disks into OCI instances.</p>
+            and the assistant shuts them down and copies their disks into OCI instances.</p>
           <span class="button primary">Log in to Prism</span>
         </a>
         <a class="card start-choice" href="#/proxmox/login" id="start-proxmox">
           <h3>Proxmox VE</h3>
           <p>Migrate virtual machines from Proxmox VE to OCI: log in with an API token or a password, pick the VMs,
-            and the migration tool shuts them down and copies the data on their disks over SSH into OCI instances.</p>
+            and the assistant shuts them down and copies the data on their disks over SSH into OCI instances.</p>
           <span class="button primary">Log in to Proxmox</span>
         </a>
         <div class="card start-choice">
@@ -79,7 +79,7 @@
         </div>
         <div class="card start-choice">
           <h3>Migrate Google Compute Engine VMs</h3>
-          <p>Log in with a service account, pick the VMs, and the migration tool
+          <p>Log in with a service account, pick the VMs, and the assistant
             exports their persistent disks (via snapshots to your GCS bucket) onto OCI volumes.</p>
           <div class="start-actions">
             <a class="button primary" href="#/gcp/login" id="start-gcp">Log in to Google Cloud</a>
@@ -89,7 +89,7 @@
         </div>
         <div class="card start-choice">
           <h3>AWS EC2 instances</h3>
-          <p>Log in with an IAM access key, pick the instances, and the migration tool
+          <p>Log in with an IAM access key, pick the instances, and the assistant
             exports their EBS volumes (after stopping the instance, or from snapshots while it runs) straight onto
             OCI volumes.</p>
           <div class="start-actions">
@@ -106,14 +106,14 @@
         </a>
         <a class="card start-choice" href="#/ova" id="start-ova">
           <h3>Import OVA from Object Storage</h3>
-          <p>Upload or pick an OVA, VMDK, or QCOW2 in a bucket; the migration tool imports the boot disk as a custom image,
+          <p>Upload or pick an OVA, VMDK, or QCOW2 in a bucket; the assistant imports the boot disk as a custom image,
             copies any additional disks, and launches the instance in OCI.</p>
           <span class="button primary">Import OVA</span>
         </a>
         <a class="card start-choice" href="#/ova-export" id="start-ova-export">
           <h3>Export OCI instance to OVA/OVF</h3>
-          <p>Stop a running instance, attach its boot volume to the migration tool (data volumes stay on the instance
-            and are also attached to the Migration Tool), stream each disk as a VMDK into Object Storage with an OVF
+          <p>Stop a running instance, attach its boot volume to the assistant (data volumes stay on the instance
+            and are also attached to the Offline Migration Assistant), stream each disk as a VMDK into Object Storage with an OVF
             descriptor and manifest, then reattach the boot volume. The instance is left stopped.</p>
           <span class="button primary">Export to OVF</span>
         </a>
@@ -217,7 +217,7 @@
           </label>
           <label>Availability domain
             <input name="availability_domain" type="text" readonly tabindex="-1">
-            <small>Fixed to the migration tool VM's availability domain.</small>
+            <small>Fixed to the assistant VM's availability domain.</small>
           </label>
           <label>Network compartment
             <select name="network_compartment_id" required></select>
@@ -419,7 +419,7 @@
             <div class="kv" id="launch-preview"></div>
             <label class="check"><input type="checkbox" name="compatibility_mode"> Maximum compatibility (IDE boot volume + E1000 NIC)</label>
             <label class="check" id="ova-rebuild-initramfs-label"><input type="checkbox" name="rebuild_initramfs" checked> Rebuild the Linux initramfs with virtio drivers after the copy</label>
-            <small id="ova-rebuild-initramfs-hint">Same as VMware/Azure migrations: mount the copied boot volume on the migration tool VM and rebuild dracut initramfs images that lack virtio modules so the guest boots in OCI.</small>
+            <small id="ova-rebuild-initramfs-hint">Same as VMware/Azure migrations: mount the copied boot volume on the assistant VM and rebuild dracut initramfs images that lack virtio modules so the guest boots in OCI.</small>
             <label class="check" id="ova-fix-network-label"><input type="checkbox" name="fix_network" checked> Configure the Linux network for OCI after the copy (DHCP on the new interface)</label>
             <small id="ova-fix-network-hint">Adds a DHCP profile for the renamed NIC (NetworkManager, netplan, or legacy ifcfg) so the imported VM gets an address on the OCI subnet.</small>
             <label>Boot volume type override
@@ -459,7 +459,7 @@
           <h2>Export OCI instance to OVA/OVF</h2>
           <a href="#/start" class="muted">&larr; back to start</a>
         </div>
-        <p class="muted">Pick an instance and a destination bucket. The migration tool stops the instance (if it is
+        <p class="muted">Pick an instance and a destination bucket. The assistant stops the instance (if it is
           running), detaches only the boot volume, attaches a second shareable copy of each data volume to itself,
           writes a stream-optimized VMDK per disk plus an OVF descriptor and manifest, then reattaches the boot
           volume. Data volumes stay on the instance.</p>
@@ -511,7 +511,7 @@
   <template id="tpl-first-use">
     <section class="card login">
       <h2>Protect this service?</h2>
-      <p class="muted">Anyone who can reach this VM can use the migration tool until you set a UI password.
+      <p class="muted">Anyone who can reach this VM can use the assistant until you set a UI password.
         You can change or remove it later on <em>Setup</em>.</p>
       <form id="first-use-form" class="form" autocomplete="off">
         <label>UI password
@@ -533,7 +533,7 @@
   <!-- ------------------------------------------------------------------ UI password unlock -->
   <template id="tpl-unlock">
     <section class="card login">
-      <h2>Unlock migration tool</h2>
+      <h2>Unlock assistant</h2>
       <form id="unlock-form" class="form" autocomplete="current-password">
         <label>
           <input name="password" type="password" required autofocus autocomplete="current-password"
@@ -557,10 +557,10 @@
         <label>vCenter server
           <input name="vcenter" type="text" required list="vcenter-recent" placeholder="vcenter.example.com[:443]" autocapitalize="off" spellcheck="false">
           <datalist id="vcenter-recent"></datalist>
-          <small>Host name or IP of the vCenter Server or standalone ESXi host, optionally with a port. The migration tool VM must reach it on that port (and on 443 for the disk export).</small>
+          <small>Host name or IP of the vCenter Server or standalone ESXi host, optionally with a port. The assistant VM must reach it on that port (and on 443 for the disk export).</small>
         </label>
         <label class="check"><input type="checkbox" name="verify_ssl"> Verify the server certificate</label>
-        <small class="form-hint">Leave off for the default self-signed / VMCA certificate. When on, the certificate must be issued by a CA the migration tool VM trusts; the same setting is used for the disk download.</small>
+        <small class="form-hint">Leave off for the default self-signed / VMCA certificate. When on, the certificate must be issued by a CA the assistant VM trusts; the same setting is used for the disk download.</small>
         <label>User name
           <input name="username" type="text" required autofocus placeholder="administrator@vsphere.local">
         </label>
@@ -585,10 +585,10 @@
         <label>Engine
           <input name="engine" type="text" required list="olvm-recent" placeholder="https://olvm.example.com" autocapitalize="off" spellcheck="false">
           <datalist id="olvm-recent"></datalist>
-          <small>Host name or URL of the OLVM engine. The migration tool VM must reach it on HTTPS, and the image proxy (typically port 54323) for the disk download.</small>
+          <small>Host name or URL of the OLVM engine. The assistant VM must reach it on HTTPS, and the image proxy (typically port 54323) for the disk download.</small>
         </label>
         <label class="check"><input type="checkbox" name="verify_ssl"> Verify the server certificate</label>
-        <small class="form-hint">Leave off for the engine's internal certificate. When on, the certificate must be issued by a CA the migration tool VM trusts; the same setting is used for the disk download.</small>
+        <small class="form-hint">Leave off for the engine's internal certificate. When on, the certificate must be issued by a CA the assistant VM trusts; the same setting is used for the disk download.</small>
         <label>User name
           <input name="username" type="text" required placeholder="admin@ovirt">
           <small>Same user as the Administration Portal, for example <code>admin@ovirt</code> or <code>admin@internal</code>.</small>
@@ -614,7 +614,7 @@
         <label>Prism
           <input name="prism" type="text" required list="nutanix-recent" placeholder="https://prism.example.com:9440" autocapitalize="off" spellcheck="false">
           <datalist id="nutanix-recent"></datalist>
-          <small>Host name or URL of Prism Central (v3 API) or Prism Element (v2 API); the port defaults to 9440. The migration tool VM must reach it on that port.</small>
+          <small>Host name or URL of Prism Central (v3 API) or Prism Element (v2 API); the port defaults to 9440. The assistant VM must reach it on that port.</small>
         </label>
         <label class="check"><input type="checkbox" name="verify_ssl"> Verify the server certificate</label>
         <small class="form-hint">Leave off for the cluster's self-signed certificate. The same setting is used for the disk download.</small>
@@ -643,7 +643,7 @@
         <label>Proxmox VE
           <input name="api_url" type="text" required list="proxmox-recent" placeholder="https://pve.example.com:8006" autocapitalize="off" spellcheck="false">
           <datalist id="proxmox-recent"></datalist>
-          <small>Host name or URL of any cluster node; the port defaults to 8006. The migration tool VM must reach the API there and SSH (TCP 22) on every node that runs a VM to migrate.</small>
+          <small>Host name or URL of any cluster node; the port defaults to 8006. The assistant VM must reach the API there and SSH (TCP 22) on every node that runs a VM to migrate.</small>
         </label>
         <label class="check"><input type="checkbox" name="verify_ssl"> Verify the server certificate</label>
         <small class="form-hint">Leave off for the node's self-signed certificate.</small>
@@ -706,12 +706,12 @@
         <label>Hyper-V host
           <input name="host" type="text" required list="hyperv-recent" placeholder="hv.example.com" autocapitalize="off" spellcheck="false">
           <datalist id="hyperv-recent"></datalist>
-          <small>Host name or IP of the Hyper-V server. The migration tool VM must reach WinRM (TCP 5986, or 5985 when HTTPS is off) and SMB (TCP 445).</small>
+          <small>Host name or IP of the Hyper-V server. The assistant VM must reach WinRM (TCP 5986, or 5985 when HTTPS is off) and SMB (TCP 445).</small>
         </label>
         <label class="check"><input type="checkbox" name="use_https" checked> Use HTTPS for WinRM</label>
         <small class="form-hint">On uses port 5986. Off uses HTTP on port 5985.</small>
         <label class="check"><input type="checkbox" name="verify_ssl"> Verify the server certificate</label>
-        <small class="form-hint">Leave off for a self-signed WinRM certificate. When on, the certificate must be issued by a CA the migration tool VM trusts.</small>
+        <small class="form-hint">Leave off for a self-signed WinRM certificate. When on, the certificate must be issued by a CA the assistant VM trusts.</small>
         <label>User name
           <input name="username" type="text" required placeholder="HOST\Administrator">
           <small>A local account (<code>HOST\Administrator</code>) or a domain account (<code>DOMAIN\user</code>).</small>
@@ -772,7 +772,7 @@ Microsoft.Compute/snapshots/endGetAccess/action</pre>
           <strong>Disk Snapshot Contributor</strong> (snapshots and granting disk export access), and
           <strong>Disk Restore Operator</strong> (revoking disk export access / <code>endGetAccess</code> on disks -
           not included in Disk Snapshot Contributor). Or use one custom role with the actions above.
-          The migration tool VM must reach <code>login.microsoftonline.com</code>,
+          The assistant VM must reach <code>login.microsoftonline.com</code>,
           <code>management.azure.com</code> and the Azure blob endpoints (<code>*.blob.core.windows.net</code>,
           <code>*.blob.storage.azure.net</code>) on TCP 443.</p>
       </details>
@@ -860,7 +860,7 @@ ebs:GetSnapshotBlock
 kms:Decrypt
 kms:DescribeKey
 kms:CreateGrant</pre>
-        <p class="muted">The last three are only needed for encrypted EBS volumes. The migration tool VM must reach
+        <p class="muted">The last three are only needed for encrypted EBS volumes. The assistant VM must reach
           <code>sts.&lt;region&gt;.amazonaws.com</code>, <code>ec2.&lt;region&gt;.amazonaws.com</code> and
           <code>ebs.&lt;region&gt;.amazonaws.com</code> on TCP 443.</p>
       </details>
@@ -1051,7 +1051,7 @@ kms:CreateGrant</pre>
           initramfs. Amazon Linux 2023 ships both in the <code>kernel-modules-extra</code> package
           (<code>kernel6.12-</code>/<code>kernel6.18-modules-extra</code> for the alternative kernels), which the AMI
           does not install; without it the copied instance never finds its disk in OCI. The commands below install the
-          package that matches the <em>running</em> kernel and list the two module files; the migration tool then
+          package that matches the <em>running</em> kernel and list the two module files; the assistant then
           rebuilds the initramfs on the OCI copy. No reboot is needed. Amazon Linux 2 already has the modules; there
           the script only runs the check.
           <textarea class="log cmd" id="amazon-linux-cmds" readonly rows="10" spellcheck="false" aria-label="Commands to run inside the EC2 instance"># Amazon Linux: run inside the EC2 instance (SSH / Session Manager) before starting the migration
@@ -1061,7 +1061,7 @@ if [ "$VERSION_ID" = "2023" ]; then
   KERNEL_PKG=$(rpm -qf --queryformat '%{NAME}' "/boot/vmlinuz-$(uname -r)")
   sudo dnf install -y "${KERNEL_PKG}-modules-extra-$(uname -r)"
 fi
-# both module files must be listed; the migration tool builds the OCI initramfs from them
+# both module files must be listed; the assistant builds the OCI initramfs from them
 find "/lib/modules/$(uname -r)" -name 'virtio_scsi.ko*' -o -name 'sd_mod.ko*'</textarea>
           <div class="actions">
             <span class="muted" id="amazon-linux-copy-state"></span>
@@ -1086,7 +1086,7 @@ find "/lib/modules/$(uname -r)" -name 'virtio_scsi.ko*' -o -name 'sd_mod.ko*'</t
           </label>
           <label>Availability domain
             <input name="availability_domain" type="text" readonly tabindex="-1">
-            <small>Fixed to the migration tool VM's availability domain: the volumes are written by the migration tool and boot volumes are AD-local.</small>
+            <small>Fixed to the assistant VM's availability domain: the volumes are written by the assistant and boot volumes are AD-local.</small>
           </label>
           <label>Network compartment
             <select name="network_compartment_id" required></select>
@@ -1144,13 +1144,13 @@ find "/lib/modules/$(uname -r)" -name 'virtio_scsi.ko*' -o -name 'sd_mod.ko*'</t
             <summary>Advanced: disk transfer</summary>
             <div id="nfc-options">
               <label class="check"><input type="checkbox" name="nfc_direct_to_esxi"> Download the disks directly from the ESXi host <span id="esxi-host-hint"></span> instead of through vCenter</label>
-              <small>Usually much faster than the vCenter proxy, but the migration tool VM must reach that ESXi host on TCP 443 (same as <code>HELPER_NFC_HOST_OVERRIDE</code>, resolved per VM).</small>
+              <small>Usually much faster than the vCenter proxy, but the assistant VM must reach that ESXi host on TCP 443 (same as <code>HELPER_NFC_HOST_OVERRIDE</code>, resolved per VM).</small>
               <label class="check"><input type="checkbox" name="pipelined_decode"> Decode and write on a separate thread (keep downloading while grains are inflated and written)</label>
               <small>Overlaps the network read with decompression and the volume write instead of doing them one after another. Buffers a few chunks in memory (<code>HELPER_NFC_PIPELINE_DEPTH</code>).</small>
             </div>
             <div id="olvm-transfer-options" hidden>
               <label class="check"><input type="checkbox" name="olvm_direct_from_host"> Download the disks directly from the KVM host instead of through the OLVM manager</label>
-              <small>Usually faster than the manager proxy, but the migration tool VM must reach that host's image service on TCP 54322. OLVM chooses the host when the transfer starts.</small>
+              <small>Usually faster than the manager proxy, but the assistant VM must reach that host's image service on TCP 54322. OLVM chooses the host when the transfer starts.</small>
             </div>
             <small id="azure-transfer-note" hidden>Azure: only the allocated pages of each managed disk are downloaded (<em>Get Page Ranges</em>), with <code>HELPER_AZURE_RANGE_WORKERS</code> parallel range requests per disk, straight onto the OCI volume. Azure charges egress for the data leaving the region.</small>
             <small id="gcp-transfer-note" hidden>Google Cloud: each disk is snapshotted and exported to your GCS bucket as a raw object, then copied with parallel HTTP range reads onto the OCI volume. GCS egress and snapshot storage apply until the job finishes.</small>
@@ -1170,11 +1170,11 @@ find "/lib/modules/$(uname -r)" -name 'virtio_scsi.ko*' -o -name 'sd_mod.ko*'</t
             <div class="kv" id="launch-preview"></div>
             <label class="check"><input type="checkbox" name="compatibility_mode"> Maximum compatibility (IDE boot volume + E1000 NIC) for guests without virtio drivers</label>
             <label class="check" id="rebuild-initramfs-label"><input type="checkbox" name="rebuild_initramfs" checked> Rebuild the Linux initramfs with virtio drivers after the copy</label>
-            <small id="rebuild-initramfs-hint">RHEL, CentOS and Oracle Linux build a <em>hostonly</em> initramfs that only knows VMware's storage drivers, so the copied VM cannot find its root disk in OCI (dracut emergency shell). With this option the migration tool mounts the copied boot volume, and runs the guest's own <code>dracut</code> in a chroot for every kernel whose initramfs lacks virtio modules. Only the OCI copy is changed; guests without dracut (Ubuntu/Debian) are skipped automatically.</small>
+            <small id="rebuild-initramfs-hint">RHEL, CentOS and Oracle Linux build a <em>hostonly</em> initramfs that only knows VMware's storage drivers, so the copied VM cannot find its root disk in OCI (dracut emergency shell). With this option the assistant mounts the copied boot volume, and runs the guest's own <code>dracut</code> in a chroot for every kernel whose initramfs lacks virtio modules. Only the OCI copy is changed; guests without dracut (Ubuntu/Debian) are skipped automatically.</small>
             <label class="check" id="fix-network-label"><input type="checkbox" name="fix_network" checked> Configure the Linux network for OCI after the copy (DHCP on the new interface)</label>
-            <small id="fix-network-hint">The network interface gets a new name in OCI (<code>ens3</code>, <code>enp0s5</code> or <code>eth0</code> instead of <code>ens192</code>), so the VMware profile - bound to the old name and usually to a static address - never comes up. The migration tool adds a NetworkManager profile that matches <em>any</em> Ethernet interface with DHCP (OCI's DHCP always hands out the VNIC's address, also a fixed private IP chosen above), installs a first-boot unit that creates <code>ifcfg-&lt;nic&gt;</code> files on guests using the legacy network scripts, adds netplan/systemd-networkd drop-ins where those are used, and disables udev rules that pin interface names to the VMware MAC addresses. Old profiles are left in place; SELinux labels are set with the guest's own tools.</small>
+            <small id="fix-network-hint">The network interface gets a new name in OCI (<code>ens3</code>, <code>enp0s5</code> or <code>eth0</code> instead of <code>ens192</code>), so the VMware profile - bound to the old name and usually to a static address - never comes up. The assistant adds a NetworkManager profile that matches <em>any</em> Ethernet interface with DHCP (OCI's DHCP always hands out the VNIC's address, also a fixed private IP chosen above), installs a first-boot unit that creates <code>ifcfg-&lt;nic&gt;</code> files on guests using the legacy network scripts, adds netplan/systemd-networkd drop-ins where those are used, and disables udev rules that pin interface names to the VMware MAC addresses. Old profiles are left in place; SELinux labels are set with the guest's own tools.</small>
             <label class="check" id="azure-cleanup-label" hidden><input type="checkbox" name="azure_cleanup" checked> Azure cleanup after the copy (cloud-init, waagent, serial console)</label>
-            <small id="azure-cleanup-hint" hidden>Azure Linux guests often stall on first boot waiting for Azure metadata, log <code>/dev/sr0</code> errors, and never show a login on the serial console. With this option the migration tool removes Azure cloud-init drop-ins, disables <code>walinuxagent</code>, comments out the Azure CD-ROM in <code>fstab</code>, enables <code>serial-getty@ttyS0</code>, and installs an OCI cloud-init datasource preference — only on the copied boot volume.</small>
+            <small id="azure-cleanup-hint" hidden>Azure Linux guests often stall on first boot waiting for Azure metadata, log <code>/dev/sr0</code> errors, and never show a login on the serial console. With this option the assistant removes Azure cloud-init drop-ins, disables <code>walinuxagent</code>, comments out the Azure CD-ROM in <code>fstab</code>, enables <code>serial-getty@ttyS0</code>, and installs an OCI cloud-init datasource preference — only on the copied boot volume.</small>
             <label class="check" id="gcp-cleanup-label" hidden><input type="checkbox" name="gcp_cleanup" checked> GCP cleanup after the copy (GCE guest agent / cloud-init)</label>
             <small id="gcp-cleanup-hint" hidden>Linux images from Google Cloud may wait on GCE metadata on first boot. This option disables Google guest-agent units, removes GCE cloud-init snippets, and prefers the OCI cloud-init datasource on the copied boot volume.</small>
             <label class="check" id="aws-cleanup-label" hidden><input type="checkbox" name="aws_cleanup" checked> AWS cleanup after the copy (cloud-init, SSM, instance-connect)</label>
@@ -1223,7 +1223,7 @@ find "/lib/modules/$(uname -r)" -name 'virtio_scsi.ko*' -o -name 'sd_mod.ko*'</t
       </section>
 
       <section class="card">
-        <h2>OCI Migration Tool VM</h2>
+        <h2>OCI Offline Migration Assistant VM</h2>
         <div id="setup-kv" class="kv"></div>
         <hr class="sep">
         <div class="toolbar">
@@ -1289,7 +1289,7 @@ find "/lib/modules/$(uname -r)" -name 'virtio_scsi.ko*' -o -name 'sd_mod.ko*'</t
         <form id="log-form" class="form" autocomplete="off">
           <label>Log level
             <select name="log_level"></select>
-            <small>Level of the Migration Tool's own messages in the service journal.</small>
+            <small>Level of the Offline Migration Assistant's own messages in the service journal.</small>
           </label>
           <label class="check"><input type="checkbox" name="oci_log_requests"> Log OCI API requests and responses</label>
           <small>Enables redacted OCI SDK diagnostics. Raw HTTP dumps are disabled to protect credentials.
@@ -1318,7 +1318,7 @@ find "/lib/modules/$(uname -r)" -name 'virtio_scsi.ko*' -o -name 'sd_mod.ko*'</t
           <button class="secondary" id="iso-images-cleanup">Delete ISO images</button>
         </div>
         <hr class="sep">
-        <p class="muted">Job history: removes finished job records from the migration tool's database (the <em>Jobs</em> page).
+        <p class="muted">Job history: removes finished job records from the assistant's database (the <em>Jobs</em> page).
           Running or queued jobs are kept. Only the records are deleted - OCI resources a failed job left behind
           (instance, volumes) are not touched; open the job and use <em>Clean up OCI resources</em> for that first.</p>
         <div class="actions">
@@ -1342,7 +1342,7 @@ find "/lib/modules/$(uname -r)" -name 'virtio_scsi.ko*' -o -name 'sd_mod.ko*'</t
           <h3>Target instance</h3>
           <div class="kv" data-target></div>
           <div class="actions">
-            <a class="button secondary" data-console hidden title="Open the VNC console of the migrated instance in the browser (OCI instance console connection through the migration tool VM)">Remote console</a>
+            <a class="button secondary" data-console hidden title="Open the VNC console of the migrated instance in the browser (OCI instance console connection through the assistant VM)">Remote console</a>
           </div>
         </section>
         <section class="job-section">
@@ -1358,7 +1358,7 @@ find "/lib/modules/$(uname -r)" -name 'virtio_scsi.ko*' -o -name 'sd_mod.ko*'</t
           <div class="actions">
             <span class="error" data-error></span>
             <span class="muted" data-copy-state></span>
-            <button class="secondary" data-copy title="Copy the job record, error and relevant migration tool log lines to the clipboard">Copy diagnostics</button>
+            <button class="secondary" data-copy title="Copy the job record, error and relevant assistant log lines to the clipboard">Copy diagnostics</button>
             <button class="secondary" data-save-diagnostics title="Download the same diagnostics bundle as a text file">Save diagnostics</button>
             <button data-resume hidden title="All disks were copied; retry attaching the volumes and starting the instance">Retry finalize</button>
             <button class="primary" data-finish hidden title="The OS is installed: complete the job (the instance stays)">Installation finished</button>
@@ -1389,7 +1389,7 @@ find "/lib/modules/$(uname -r)" -name 'virtio_scsi.ko*' -o -name 'sd_mod.ko*'</t
         <button class="secondary small" id="console-close" title="Disconnect and delete the OCI console connection">Close console</button>
         <a id="console-back" class="muted" href="#/jobs">&larr; job</a>
       </div>
-      <p class="muted console-hint">The screen is the OCI instance console (VNC) of the instance, tunnelled through the migration tool VM.
+      <p class="muted console-hint">The screen is the OCI instance console (VNC) of the instance, tunnelled through the assistant VM.
         Click into the screen to type. The console connection is deleted when you close it or after it has been idle for a while.</p>
       <div id="console-error" class="error"></div>
       <div id="vnc-screen" class="vnc-screen"></div>
@@ -1398,7 +1398,7 @@ find "/lib/modules/$(uname -r)" -name 'virtio_scsi.ko*' -o -name 'sd_mod.ko*'</t
 
   <!-- opened by the (i) next to an "encrypted" badge: what to do in vCenter before such a VM can be exported -->
   <dialog id="gcp-auth-help" class="help help-wide">
-    <h2>Google Cloud authentication for the migration tool</h2>
+    <h2>Google Cloud authentication for the assistant</h2>
     <p>The UI uses a <strong>service account JSON key</strong> (not your user account). The key is sent to the migration
       tool VM over HTTPS and kept in memory for the session. Disk exports are written to the <strong>GCS bucket</strong>
       you name at login; the tool deletes those objects when the job ends.</p>
@@ -1486,17 +1486,17 @@ echo "Migration tool login: bucket = ${EXPORT_BUCKET} ; paste contents of oci-um
   </dialog>
 
   <dialog id="aws-auth-help" class="help help-wide">
-    <h2>AWS authentication for the migration tool</h2>
+    <h2>AWS authentication for the assistant</h2>
     <p>The UI does <strong>not</strong> use your personal AWS console login. You log in with an
       <strong>IAM user access key</strong> (access key ID, secret, and the EC2 region). The browser sends them
-      to the Migration Tool VM over HTTPS; the Migration Tool signs EC2, EBS and STS requests on your behalf. Credentials
+      to the Assistant VM over HTTPS; the Offline Migration Assistant signs EC2, EBS and STS requests on your behalf. Credentials
       stay in memory for the session only (the secret is never stored on disk; access key ID and region may be
       remembered in this browser).</p>
     <p><strong>You need:</strong></p>
     <ul>
       <li>Permission to <strong>list and stop</strong> instances and to <strong>create, read and delete</strong>
         EBS snapshots (plus EBS Direct <code>ListSnapshotBlocks</code> / <code>GetSnapshotBlock</code>).</li>
-      <li>Outbound HTTPS from the migration tool VM to
+      <li>Outbound HTTPS from the assistant VM to
         <code>sts.&lt;region&gt;.amazonaws.com</code>, <code>ec2.&lt;region&gt;.amazonaws.com</code> and
         <code>ebs.&lt;region&gt;.amazonaws.com</code>.</li>
     </ul>
@@ -1548,10 +1548,10 @@ aws iam put-user-policy --user-name "$USER_NAME" --policy-name "$POLICY_NAME" --
   </dialog>
 
   <dialog id="azure-auth-help" class="help help-wide">
-    <h2>Azure authentication for the migration tool</h2>
+    <h2>Azure authentication for the assistant</h2>
     <p>The UI does <strong>not</strong> use your personal Microsoft account. You log in with a
       <strong>service principal</strong> (an Entra ID app registration plus a client secret). The browser sends
-      tenant ID, client ID and secret to the Migration Tool VM over HTTPS; the Migration Tool exchanges them for a
+      tenant ID, client ID and secret to the Assistant VM over HTTPS; the Offline Migration Assistant exchanges them for a
       short-lived OAuth token against <code>login.microsoftonline.com</code> and calls Azure Resource Manager
       on your behalf. Credentials stay in memory for the session only (the secret is never stored on disk;
       tenant and client ID may be remembered in this browser).</p>
@@ -1560,7 +1560,7 @@ aws iam put-user-policy --user-name "$USER_NAME" --policy-name "$POLICY_NAME" --
       <li><strong>Reader</strong> on each subscription that holds VMs (list VMs, disks and sizes).</li>
       <li>Permission to <strong>deallocate</strong> VMs and to grant <strong>read SAS</strong> on managed disks
         (and create/delete snapshots if you use snapshot capture mode).</li>
-      <li>Outbound HTTPS from the migration tool VM to
+      <li>Outbound HTTPS from the assistant VM to
         <code>login.microsoftonline.com</code>, <code>management.azure.com</code>, and Azure blob endpoints
         (<code>*.blob.core.windows.net</code>, <code>*.blob.storage.azure.net</code>).</li>
     </ul>
@@ -1571,7 +1571,7 @@ aws iam put-user-policy --user-name "$USER_NAME" --policy-name "$POLICY_NAME" --
     <textarea class="log azure-cli-edit" id="azure-auth-help-cli" rows="22" spellcheck="false" aria-label="Azure CLI setup commands"># --- variables (edit these) ---
 SUBSCRIPTION_ID="00000000-0000-0000-0000-000000000000"
 APP_NAME="oci-umt-migration"
-ROLE_NAME="OCI Ultimate Migration Tool Disk Export"
+ROLE_NAME="OCI Offline Migration Assistant Disk Export"
 SECRET_MONTHS=6
 # Subscription scope, or a resource group:
 # ASSIGNMENT_SCOPE="/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/my-rg"
@@ -1584,13 +1584,13 @@ az ad app create --display-name "$APP_NAME"
 APP_ID=$(az ad app list --display-name "$APP_NAME" --query "[0].appId" -o tsv)
 az ad sp create --id "$APP_ID"
 
-# 2) Client secret — copy "password" into the migration tool Azure login (shown once)
+# 2) Client secret — copy "password" into the assistant Azure login (shown once)
 END_DATE=$(date -u -d "+${SECRET_MONTHS} months" +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -v+${SECRET_MONTHS}m +%Y-%m-%dT%H:%M:%SZ)
 az ad app credential reset --id "$APP_ID" --display-name oci-umt --end-date "$END_DATE"
 
 # 3) Custom role (save as oci-umt-role.json; set AssignableScopes to your subscription id)
 # {
-#   "Name": "OCI Ultimate Migration Tool Disk Export",
+#   "Name": "OCI Offline Migration Assistant Disk Export",
 #   "IsCustom": true,
 #   "Description": "Deallocate VMs and grant disk export SAS for Azure-to-OCI migration",
 #   "Actions": [
@@ -1625,7 +1625,7 @@ echo "Client ID: $APP_ID"</textarea>
   <dialog id="encrypted-help" class="help">
     <h2>Encrypted VM: <span id="encrypted-help-name"></span></h2>
     <p>vSphere does not allow exporting an encrypted VM (<code>The operation is not supported on encrypted VM</code>),
-      and the migration tool needs that export to read the disks. A <strong>Virtual TPM</strong> device can only exist on an
+      and the assistant needs that export to read the disks. A <strong>Virtual TPM</strong> device can only exist on an
       encrypted VM, which is why Windows 11 VMs are usually encrypted. Decrypt the VM in vCenter first, the VM's data is
       not touched:</p>
     <ol>
@@ -1642,7 +1642,7 @@ echo "Client ID: $APP_ID"</textarea>
       <li id="encrypted-help-disks">For an encrypted virtual disk: <em>Edit Settings &gt; VM Options &gt; Encryption</em> lists
         the disks; pick a <strong>VM storage policy without encryption</strong> for each of them (or change the disk's
         policy under <em>Virtual Hardware &gt; Hard disk &gt; VM storage policy</em>).</li>
-      <li>Back in the migration tool, click <em>Refresh</em> in the Source VMs list and start the migration. The OCI instance is
+      <li>Back in the assistant, click <em>Refresh</em> in the Source VMs list and start the migration. The OCI instance is
         still launched as a shielded instance with Secure Boot and a vTPM when the source used Secure Boot.</li>
     </ol>
     <p class="muted">Optional afterwards: re-encrypt the source VM in vCenter, or keep it as it is for a rollback.</p>

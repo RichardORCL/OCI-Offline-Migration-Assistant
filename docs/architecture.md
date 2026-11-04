@@ -2,8 +2,8 @@
 
 ## Single component
 
-The whole tool is one service, the **OCI Ultimate Migration Tool**, running on a compute instance in OCI
-(the *OCI Migration Tool VM*):
+The whole tool is one service, the **OCI Offline Migration Assistant**, running on a compute instance in OCI
+(the *OCI Offline Migration Assistant VM*):
 
 - a web UI (`/ui`) and REST API (`/api`) served by FastAPI/uvicorn over TLS on port 8443;
 - a source client chosen at login: pyVmomi for vCenter/ESXi, WinRM and SMB for a Hyper-V host, or a small `httpx` REST client for OLVM
@@ -11,11 +11,11 @@ The whole tool is one service, the **OCI Ultimate Migration Tool**, running on a
   Google Cloud (service-account JWT: Compute Engine, Cloud Build, Cloud Storage);
 - the migration engine that provisions the OCI target, pulls the disks from the source (NFC, Hyper-V SMB,
   OLVM image transfer, Nutanix temporary image download, Proxmox read-only qemu-nbd over SSH, Azure page blob, EBS Direct, GCS export tarball, or an OVA/OVF/qcow2 in Object Storage) and writes them onto OCI
-  volumes attached to the Migration Tool itself.
+  volumes attached to the Offline Migration Assistant itself.
 
 There is no agent in the source environment and no shared secret: the source platform's own RBAC
 decides who may export which VM; OCI IAM (instance principal + dynamic group policy) decides what the
-Migration Tool may create.
+Offline Migration Assistant may create.
 
 ## Authentication and sessions
 
@@ -265,12 +265,12 @@ UI requires a choice before starting and lets you change it afterwards
 
 ## Security
 
-- Credentials are never stored on disk; the Migration Tool holds the source session (vCenter cookie,
+- Credentials are never stored on disk; the Offline Migration Assistant holds the source session (vCenter cookie,
   Azure/AWS/GCP secrets and tokens, OLVM password and bearer token, Hyper-V password) per logged-in user in memory only. The browser may remember
   non-secret fields (last vCenter host, Azure tenant/client ID), never passwords or keys.
 - The API is protected by the session cookie (HttpOnly, SameSite=strict, `Secure` unless
   `HELPER_COOKIE_SECURE=false` for local development). An optional UI password gates the whole UI.
-- OCI access uses the Migration Tool's instance principal; the Terraform stack scopes the policy to a
+- OCI access uses the Offline Migration Assistant's instance principal; the Terraform stack scopes the policy to a
   compartment (`policy_scope_compartment_ocid`).
 - vCenter, OLVM and Hyper-V WinRM TLS verification are chosen per login (*Verify the server certificate*). Azure, AWS and
   Google Cloud TLS is always verified (public CA certificates).

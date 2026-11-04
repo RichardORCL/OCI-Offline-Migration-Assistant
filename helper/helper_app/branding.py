@@ -1,7 +1,16 @@
-"""Naming prefix for OCI freeform tags, seed/ISO images and related cloud labels (OCI Ultimate Migration Tool)."""
+"""Product naming and OCI label prefixes for the OCI Offline Migration Assistant."""
 
 from __future__ import annotations
 
+PRODUCT_NAME = "OCI Offline Migration Assistant"
+PRODUCT_VM_NAME = "OCI Offline Migration Assistant VM"
+GITHUB_OWNER = "RichardORCL"
+GITHUB_REPO = "OCI-Offline-Migration-Assistant"
+SOURCE_GIT_URL = f"https://github.com/{GITHUB_OWNER}/{GITHUB_REPO}.git"
+STACK_ZIP_FILENAME = "oci-offline-migration-assistant-stack.zip"
+DEFINED_TAG_NAMESPACE = "OfflineMigrationAssistant"
+
+# Internal compatibility prefix for freeform tags, seed bucket defaults, staging paths, etc.
 PREFIX = "oci-umt"
 
 

@@ -122,7 +122,7 @@ class Provisioner:
             raise OciError("source VM has no virtual disks")
         if target.availability_domain != self.c.identity_info.availability_domain:
             raise OciError(
-                f"target availability domain {target.availability_domain} differs from the migration tool VM's "
+                f"target availability domain {target.availability_domain} differs from the assistant VM's "
                 f"{self.c.identity_info.availability_domain}; boot volumes can only be attached within one AD"
             )
 
@@ -285,18 +285,18 @@ class Provisioner:
             if disk.is_boot:
                 # OCI refuses a device path for a boot volume attached as a data volume
                 # ("the specified device attribute ... is invalid"); find the disk by its appearance instead
-                step("attach_to_helper", f"Attaching disk {disk.index} (boot volume) to the migration tool VM")
+                step("attach_to_helper", f"Attaching disk {disk.index} (boot volume) to the assistant VM")
                 self._attach_boot_volume_to_helper(job, disk, check_cancel)
             else:
                 device = self._pick_free_device(job)
-                step("attach_to_helper", f"Attaching disk {disk.index} volume to the migration tool VM as {device}")
+                step("attach_to_helper", f"Attaching disk {disk.index} volume to the assistant VM as {device}")
                 # a volume that already hangs off the target must be shared on every attachment
                 att = self._attach_to_helper(job, disk, device, shareable=bool(disk.target_attachment_id))
                 disk.device = att.device or device
             disk.status = DiskStatus.ATTACHED
             self.save(job)
 
-        step("ready", "Volumes attached to the migration tool VM; ready to receive disk streams")
+        step("ready", "Volumes attached to the assistant VM; ready to receive disk streams")
         return job
 
     def prepare_placeholder(
@@ -324,7 +324,7 @@ class Provisioner:
             raise OciError("job has no disks to import")
         if target.availability_domain != self.c.identity_info.availability_domain:
             raise OciError(
-                f"target availability domain {target.availability_domain} differs from the migration tool VM's "
+                f"target availability domain {target.availability_domain} differs from the assistant VM's "
                 f"{self.c.identity_info.availability_domain}; boot volumes can only be attached within one AD"
             )
 
@@ -494,17 +494,17 @@ class Provisioner:
             if disk.helper_attachment_id and disk.device:
                 continue
             if disk.is_boot:
-                step("attach_to_helper", f"Attaching disk {disk.index} (boot volume) to the migration tool VM")
+                step("attach_to_helper", f"Attaching disk {disk.index} (boot volume) to the assistant VM")
                 self._attach_boot_volume_to_helper(job, disk, check_cancel)
             else:
                 device = self._pick_free_device(job)
-                step("attach_to_helper", f"Attaching disk {disk.index} volume to the migration tool VM as {device}")
+                step("attach_to_helper", f"Attaching disk {disk.index} volume to the assistant VM as {device}")
                 att = self._attach_to_helper(job, disk, device, shareable=bool(disk.target_attachment_id))
                 disk.device = att.device or device
             disk.status = DiskStatus.ATTACHED
             self.save(job)
 
-        step("ready", "Volumes attached to the migration tool VM; ready to receive OVA disk streams")
+        step("ready", "Volumes attached to the assistant VM; ready to receive OVA disk streams")
         return job
 
     @staticmethod
@@ -561,7 +561,7 @@ class Provisioner:
         self.save(job)
         return self.c.wait_for(lambda: self.c.compute.get_volume_attachment(att.id), "lifecycle_state",
                                ["ATTACHED"], self.s.volume_timeout_s,
-                               what=f"migration tool VM attachment disk {disk.index}")
+                               what=f"assistant VM attachment disk {disk.index}")
 
     def _boot_volume_expected_bytes(self, disk: DiskState) -> int:
         expected = disk.capacity_bytes or disk.size_gb * 1024**3
@@ -605,14 +605,14 @@ class Provisioner:
             except RuntimeError as exc:
                 if type(exc) is not RuntimeError:
                     raise
-                raise OciError("boot volume attached to the migration tool VM but its disk was not found: "
+                raise OciError("boot volume attached to the assistant VM but its disk was not found: "
                                f"{exc}") from exc
-        log.info("job %s: boot volume %s appeared on the migration tool VM as %s", job.id, disk.volume_id, disk.device)
+        log.info("job %s: boot volume %s appeared on the assistant VM as %s", job.id, disk.volume_id, disk.device)
 
     def _note_boot_device_wait(self, job: Job, expected: int, new: dict[str, int]) -> None:
         seen = ", ".join(f"{p} ({s} bytes)" for p, s in sorted(new.items())) or "none"
         job.message = (
-            f"Waiting for the boot volume ({expected} bytes) to appear on the migration tool VM "
+            f"Waiting for the boot volume ({expected} bytes) to appear on the assistant VM "
             f"(new disks: {seen})"
         )
         self.save(job)
@@ -626,7 +626,7 @@ class Provisioner:
         for name in names:
             if name not in used:
                 return name
-        raise OciError("no free consistent device path on the migration tool VM (max 32 attachments)")
+        raise OciError("no free consistent device path on the assistant VM (max 32 attachments)")
 
     # ----------------------------------------------------------------- finalize
     def finalize(self, job: Job) -> Job:
@@ -688,7 +688,7 @@ class Provisioner:
         if spec is None:
             raise OciError("job has no OVA export source")
         if spec.instance_id == self.helper_id:
-            raise OciError("cannot export the migration tool VM")
+            raise OciError("cannot export the assistant VM")
 
         def step(name: str, message: str = "") -> None:
             self._step(job, name, message, check_cancel)
@@ -802,7 +802,7 @@ class Provisioner:
 
         boot_disk = job.disks[0]
         if not boot_disk.helper_attachment_id:
-            step("attach_boot_to_helper", "Attaching boot volume to the migration tool VM")
+            step("attach_boot_to_helper", "Attaching boot volume to the assistant VM")
             self._attach_boot_volume_to_helper(job, boot_disk, check_cancel)
             boot_disk.status = DiskStatus.ATTACHED
             self.save(job)
@@ -843,7 +843,7 @@ class Provisioner:
                                     what=f"source detach emulated disk {disk.index}")
                     src.attachment_id = None
                 if not disk.helper_attachment_id:
-                    step("attach_data_to_helper", f"Attaching disk {disk.index} to the migration tool VM")
+                    step("attach_data_to_helper", f"Attaching disk {disk.index} to the assistant VM")
                     device = self._pick_free_device(job)
                     self._attach_to_helper(job, disk, device, shareable=False)
                     disk.device = device
@@ -861,7 +861,7 @@ class Provisioner:
             if disk.helper_attachment_id:
                 continue
             step("attach_data_to_helper",
-                 f"Attaching disk {disk.index} to the migration tool VM (shareable)")
+                 f"Attaching disk {disk.index} to the assistant VM (shareable)")
             device = self._pick_free_device(job)
             self._attach_to_helper(job, disk, device, shareable=True)
             disk.device = device
@@ -1025,13 +1025,13 @@ class Provisioner:
         for disk in job.disks:
             if not disk.helper_attachment_id:
                 continue
-            self._step(job, "detach_from_helper", f"Detaching disk {disk.index} from the migration tool VM")
+            self._step(job, "detach_from_helper", f"Detaching disk {disk.index} from the assistant VM")
             att = self.c.compute.get_volume_attachment(disk.helper_attachment_id).data
             if att.lifecycle_state not in ("DETACHED", "DETACHING"):
                 self.c.compute.detach_volume(disk.helper_attachment_id)
             self.c.wait_for(lambda aid=disk.helper_attachment_id: self.c.compute.get_volume_attachment(aid),
                             "lifecycle_state", ["DETACHED"], self.s.volume_timeout_s,
-                            what=f"migration tool VM detach disk {disk.index}")
+                            what=f"assistant VM detach disk {disk.index}")
             disk.helper_attachment_id = None
             disk.device = None
             self.save(job)

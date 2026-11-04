@@ -155,7 +155,7 @@ class IsoInstaller:
         iso, target = job.iso, job.target
         if target.availability_domain != self.c.identity_info.availability_domain:
             raise OciError(
-                f"target availability domain {target.availability_domain} differs from the migration tool VM's "
+                f"target availability domain {target.availability_domain} differs from the assistant VM's "
                 f"{self.c.identity_info.availability_domain}"
             )
         job.phase = JobPhase.PROVISIONING

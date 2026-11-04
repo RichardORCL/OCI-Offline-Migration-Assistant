@@ -28,7 +28,7 @@ def cleanup_resources(provisioner: Provisioner, job: Job) -> list[str]:
     try:
         provisioner._detach_all_from_helper(job)
     except Exception as exc:  # noqa: BLE001
-        actions.append(f"failed: detach from the migration tool VM: {exc}")
+        actions.append(f"failed: detach from the assistant VM: {exc}")
     # data volumes attached to the target in prepare(): release them first, otherwise deleting the volume
     # races the detach that terminating the instance triggers
     for disk in job.disks[1:]:

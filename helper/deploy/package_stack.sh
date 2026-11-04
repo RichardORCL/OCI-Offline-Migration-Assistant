@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 # Package the migration tool Terraform as a Resource Manager stack zip and optionally create the stack.
 #
-#   ./package_stack.sh                       -> <repo root>/oci-ultimate-migration-tool-stack.zip
+#   ./package_stack.sh                       -> <repo root>/oci-offline-migration-assistant-stack.zip
 #                                               (committed; the README "Deploy to Oracle Cloud" button links to it)
 #   ./package_stack.sh --create <compartment-ocid> [--name OCI-Ultimate-Migration-Tool]
 #
@@ -9,7 +9,7 @@ set -eu
 HERE="$(cd "$(dirname "$0")" && pwd)"
 SRC="${HERE}/terraform"
 ROOT="$(cd "${HERE}/../.." && pwd)"
-ZIP="${ROOT}/oci-ultimate-migration-tool-stack.zip"
+ZIP="${ROOT}/oci-offline-migration-assistant-stack.zip"
 NAME="OCI-Ultimate-Migration-Tool"
 CREATE=""
 
@@ -29,7 +29,7 @@ if [ -n "$CREATE" ]; then
   oci resource-manager stack create \
     --compartment-id "$CREATE" \
     --display-name "$NAME" \
-    --description "OCI Ultimate Migration Tool VM" \
+    --description "OCI Offline Migration Assistant VM" \
     --config-source "$ZIP" \
     --terraform-version "1.5.x" \
     --query 'data.id' --raw-output

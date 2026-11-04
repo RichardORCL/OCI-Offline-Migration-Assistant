@@ -21,7 +21,7 @@ provider "oci" {
 locals {
   network_compartment = var.network_compartment_ocid != "" ? var.network_compartment_ocid : var.compartment_ocid
   policy_scope  = var.policy_scope_compartment_ocid != "" ? "compartment id ${var.policy_scope_compartment_ocid}" : "tenancy"
-  tag_namespace = "UltimateMigrationTool"
+  tag_namespace = "OfflineMigrationAssistant"
   tag_role_key  = "role"
   dynamic_group = "${var.helper_display_name}-dg"
 }
@@ -103,21 +103,21 @@ resource "oci_identity_tag_namespace" "migration_tool" {
   count          = var.create_iam ? 1 : 0
   compartment_id = var.compartment_ocid
   name           = local.tag_namespace
-  description    = "Resources used by OCI Ultimate Migration Tool"
+  description    = "Resources used by OCI Offline Migration Assistant"
 }
 
 resource "oci_identity_tag" "role" {
   count            = var.create_iam ? 1 : 0
   tag_namespace_id = oci_identity_tag_namespace.migration_tool[0].id
   name             = local.tag_role_key
-  description      = "Role of the resource in the OCI Ultimate Migration Tool workflow"
+  description      = "Role of the resource in the OCI Offline Migration Assistant workflow"
 }
 
 resource "oci_identity_dynamic_group" "helper" {
   count          = var.create_iam ? 1 : 0
   compartment_id = var.tenancy_ocid
   name           = local.dynamic_group
-  description    = "OCI Migration Tool VM"
+  description    = "OCI Offline Migration Assistant VM"
   matching_rule  = "ALL {instance.compartment.id = '${var.compartment_ocid}', tag.${local.tag_namespace}.${local.tag_role_key}.value = 'helper'}"
 }
 
@@ -125,17 +125,17 @@ resource "oci_identity_policy" "helper" {
   count          = var.create_iam ? 1 : 0
   compartment_id = var.tenancy_ocid
   name           = "${var.helper_display_name}-policy"
-  description    = "Permissions needed by the OCI Migration Tool VM"
+  description    = "Permissions needed by the OCI Offline Migration Assistant VM"
   statements = [
     # target instances, volumes and attachments; instance-family also covers the instance console connections
     # and the instance listing of the "OCI Remote Console" page (Resource Search only returns resources the
-    # migration tool VM may read anyway, so the policy scope bounds the search as well)
+    # assistant VM may read anyway, so the policy scope bounds the search as well)
     "Allow dynamic-group ${local.dynamic_group} to manage instance-family in ${local.policy_scope}",
     "Allow dynamic-group ${local.dynamic_group} to manage volume-family in ${local.policy_scope}",
     "Allow dynamic-group ${local.dynamic_group} to use virtual-network-family in ${local.policy_scope}",
     "Allow dynamic-group ${local.dynamic_group} to read compartments in tenancy",
     "Allow dynamic-group ${local.dynamic_group} to inspect compartments in tenancy",
-    # the migration tool VM's own attachments live in its compartment
+    # the assistant VM's own attachments live in its compartment
     "Allow dynamic-group ${local.dynamic_group} to manage volume-attachments in compartment id ${var.compartment_ocid}",
     # seed custom images and their capability schemas (global schemas are readable by any authenticated principal)
     "Allow dynamic-group ${local.dynamic_group} to manage instance-images in compartment id ${var.compartment_ocid}",
@@ -149,7 +149,7 @@ resource "oci_identity_policy" "helper" {
     "Allow dynamic-group ${local.dynamic_group} to read objectstorage-namespaces in tenancy",
     # "Create OCI instance based on ISO": the ISO picker lists buckets and objects anywhere in the policy scope,
     # and the image import reads the ISO the same way it reads the seed placeholder (through a PAR the
-    # import service creates as the migration tool VM), so PAR_MANAGE is needed on the ISO buckets as well
+    # import service creates as the assistant VM), so PAR_MANAGE is needed on the ISO buckets as well
     "Allow dynamic-group ${local.dynamic_group} to read buckets in ${local.policy_scope}",
     "Allow dynamic-group ${local.dynamic_group} to read objects in ${local.policy_scope}",
     "Allow dynamic-group ${local.dynamic_group} to manage objects in ${local.policy_scope}",
@@ -167,7 +167,7 @@ resource "time_sleep" "iam_propagation" {
   depends_on      = [oci_identity_tag.role, oci_identity_policy.helper]
 }
 
-# ---------------------------------------------------------------------------- migration tool VM
+# ---------------------------------------------------------------------------- assistant VM
 resource "oci_core_instance" "helper" {
   availability_domain = var.availability_domain
   compartment_id      = var.compartment_ocid
@@ -204,7 +204,7 @@ resource "oci_core_instance" "helper" {
   }
 
   # The tag selects the instance into the dynamic group. When create_iam is false the namespace
-  # "UltimateMigrationTool" with key "role" must already exist in the tenancy.
+  # "OfflineMigrationAssistant" with key "role" must already exist in the tenancy.
   defined_tags = { "${local.tag_namespace}.${local.tag_role_key}" = "helper" }
 
   metadata = {

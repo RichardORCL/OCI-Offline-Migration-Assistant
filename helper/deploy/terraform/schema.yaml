@@ -1,6 +1,6 @@
-title: "OCI Ultimate Migration Tool"
+title: "OCI Offline Migration Assistant"
 description: >
-  Deploys the OCI Ultimate Migration Tool for VM migration, image import/export, ISO installation
+  Deploys the OCI Offline Migration Assistant for VM migration, image import/export, ISO installation
   and remote console access, with supporting networking, storage and IAM resources.
 schemaVersion: 1.1.0
 version: "0.2.0"
@@ -18,7 +18,7 @@ variableGroups:
       - subnet_ocid
       - assign_public_ip
       - allowed_source_cidrs
-  - title: "OCI Migration Tool VM"
+  - title: "OCI Offline Migration Assistant VM"
     variables:
       - helper_display_name
       - helper_shape
@@ -46,7 +46,7 @@ variables:
   compartment_ocid:
     type: oci:identity:compartment:id
     title: "Compartment"
-    description: "Compartment for the OCI Migration Tool VM, the seed bucket and seed images"
+    description: "Compartment for the OCI Offline Migration Assistant VM, the seed bucket and seed images"
     required: true
 
   availability_domain:
@@ -134,8 +134,8 @@ variables:
   source_git_url:
     type: string
     title: "Git repository URL"
-    description: "HTTPS URL of the migration tool repository (must be reachable from the OCI Migration Tool VM); cloned and installed with pip"
-    default: "https://github.com/RichardORCL/OCI-UltimateMigrationTool.git"
+    description: "HTTPS URL of the migration tool repository (must be reachable from the OCI Offline Migration Assistant VM); cloned and installed with pip"
+    default: "https://github.com/RichardORCL/OCI-Offline-Migration-Assistant.git"
     required: true
 
   source_git_ref:
@@ -164,7 +164,7 @@ variables:
   create_iam:
     type: boolean
     title: "Create IAM resources"
-    description: "Dynamic group, policy and the UltimateMigrationTool tag namespace (requires administrator rights in the tenancy root)"
+    description: "Dynamic group, policy and the OfflineMigrationAssistant tag namespace (requires administrator rights in the tenancy root)"
     default: true
 
   policy_scope_compartment_ocid:
@@ -194,7 +194,7 @@ outputGroups:
 outputs:
   helper_ui_url:
     type: link
-    title: "OCI Ultimate Migration Tool web UI"
+    title: "OCI Offline Migration Assistant web UI"
   availability_domain:
     type: string
     title: "Availability domain for migrated instances"
@@ -203,7 +203,7 @@ outputs:
     title: "Next steps"
   helper_instance_id:
     type: ocid
-    title: "OCI Migration Tool VM"
+    title: "OCI Offline Migration Assistant VM"
   helper_private_ip:
     type: string
     title: "Private IP"

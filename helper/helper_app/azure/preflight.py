@@ -78,7 +78,7 @@ def warnings(details: AzureVmDetails, capture_mode: AzureCaptureMode = "dealloca
         props = details.disk_doc(disk_id).get("properties") or {}
         if str(props.get("networkAccessPolicy") or "").lower() == "allowprivate":
             notes.append(f"disk {disk_id.rsplit('/', 1)[-1]} allows exports through its private endpoint only; the "
-                         "migration tool VM must reach that endpoint (Private Link to OCI) or the download fails")
+                         "assistant VM must reach that endpoint (Private Link to OCI) or the download fails")
     if spec.secure_boot:
         notes.append("Trusted Launch with Secure Boot is enabled on the source; the OCI instance is launched as a "
                      "shielded instance with Secure Boot (x86 shape required, the guest's boot loader must be signed)")

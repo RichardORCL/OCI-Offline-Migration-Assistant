@@ -1,4 +1,4 @@
-"""OCI Ultimate Migration Tool: web UI, NFC export from vCenter/ESXi and block copy onto OCI volumes."""
+"""OCI Offline Migration Assistant: web UI, NFC export from vCenter/ESXi and block copy onto OCI volumes."""
 
 from importlib.metadata import PackageNotFoundError, version
 

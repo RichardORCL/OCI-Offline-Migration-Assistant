@@ -91,7 +91,7 @@ class OvaImporter:
         ova, target = job.ova, job.target
         if target.availability_domain != self.c.identity_info.availability_domain:
             raise OciError(
-                f"target availability domain {target.availability_domain} differs from the migration tool VM's "
+                f"target availability domain {target.availability_domain} differs from the assistant VM's "
                 f"{self.c.identity_info.availability_domain}"
             )
 
@@ -163,7 +163,7 @@ class OvaImporter:
             disk.status = DiskStatus.COPYING
             self.save(job)
             if not disk.device:
-                raise OciError(f"disk {disk.index} is not attached to the migration tool VM")
+                raise OciError(f"disk {disk.index} is not attached to the assistant VM")
 
             def prog(recv: int, written: int, disk=disk) -> None:
                 disk.bytes_received = recv

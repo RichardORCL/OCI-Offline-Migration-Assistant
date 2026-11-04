@@ -1,6 +1,6 @@
-# OCI Ultimate Migration Tool
+# OCI Offline Migration Assistant
 
-The **OCI Ultimate Migration Tool** brings virtual machines into Oracle Cloud Infrastructure. It runs as a
+The **OCI Offline Migration Assistant** brings virtual machines into Oracle Cloud Infrastructure. It runs as a
 single VM in your OCI tenancy with a web UI: log in to the source platform, pick the VMs, choose where they
 should land in OCI, and follow the progress. The tool creates OCI instances from the source disks and maps
 firmware and sizing to supported OCI options. Review the [guest prerequisites and limitations](docs/limitations.md)
@@ -30,7 +30,7 @@ Workstation/Fusion and unmanaged KVM (a host that is not OLVM) are not supported
 
 ## Quick start
 
-[![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?zipUrl=https://github.com/RichardORCL/OCI-UltimateMigrationTool/raw/12e1afb0165acf9497d06b8d899652906a488695/oci-ultimate-migration-tool-stack.zip)
+[![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?zipUrl=https://github.com/RichardORCL/OCI-Offline-Migration-Assistant/raw/12e1afb0165acf9497d06b8d899652906a488695/oci-offline-migration-assistant-stack.zip)
 
 The button uses a verified stack revision. If an already-open Create stack page shows an older
 description, close it and open the button again. Existing stacks retain their saved configuration.
@@ -49,7 +49,7 @@ Without a UI password, anyone who can reach the UI can create an anonymous sessi
 resources within the tool VM's IAM scope. All unlocked sessions share that authority; source login does
 not isolate jobs by user. Configure a password on first use and restrict access to administrators.
 
-![Start page of the OCI Ultimate Migration Tool](Screenshot.png)
+![Start page of the OCI Offline Migration Assistant](Screenshot.png)
 
 ## Networking
 

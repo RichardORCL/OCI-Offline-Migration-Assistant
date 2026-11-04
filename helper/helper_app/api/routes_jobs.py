@@ -110,7 +110,7 @@ async def _check_target(st, target, allow_arm: bool = False) -> None:
     helper_ad = st.clients.identity_info.availability_domain
     if target.availability_domain != helper_ad:
         raise HTTPException(status.HTTP_400_BAD_REQUEST,
-                            f"the availability domain must be the migration tool VM's ({helper_ad})")
+                            f"the availability domain must be the assistant VM's ({helper_ad})")
     shape = target.shape or st.settings.default_shape
     if is_arm_shape(shape) and not allow_arm:
         raise HTTPException(status.HTTP_400_BAD_REQUEST,
@@ -624,7 +624,7 @@ async def create_ova_export_job(body: CreateOvaExportJobRequest, request: Reques
     st = request.app.state
     helper_id = st.clients.identity_info.instance_id
     if body.instance_id == helper_id:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, "cannot export the migration tool VM")
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "cannot export the assistant VM")
     try:
         inst = await asyncio.to_thread(lambda: st.clients.compute.get_instance(body.instance_id).data)
     except Exception as exc:  # noqa: BLE001

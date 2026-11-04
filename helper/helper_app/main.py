@@ -1,4 +1,4 @@
-"""FastAPI application factory and entry point for the OCI Ultimate Migration Tool.
+"""FastAPI application factory and entry point for the OCI Offline Migration Assistant.
 
 Serves the web UI (``/ui``), the REST API (``/api``) and runs the migrations.
 """
@@ -15,6 +15,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from helper_app import __version__, logging_config, runtime_settings
+from helper_app.branding import PRODUCT_NAME
 from helper_app.api import (
     routes_auth,
     routes_aws_vms,
@@ -123,7 +124,7 @@ def create_app(
             app.state.sessions.close_all()
             app.state.store.close()
 
-    app = FastAPI(title="OCI Ultimate Migration Tool", version=__version__, lifespan=lifespan)
+    app = FastAPI(title=PRODUCT_NAME, version=__version__, lifespan=lifespan)
     app.include_router(routes_auth.router)
     app.include_router(routes_vms.router)
     app.include_router(routes_azure_vms.router)

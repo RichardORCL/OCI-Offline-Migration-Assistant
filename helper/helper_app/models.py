@@ -230,7 +230,7 @@ class OciTarget(BaseModel):
     )
     rebuild_initramfs: bool = Field(
         default=True,
-        description="Linux guests: after the copy, mount the target boot volume on the migration tool VM and rebuild "
+        description="Linux guests: after the copy, mount the target boot volume on the assistant VM and rebuild "
                     "the initramfs of every installed kernel with virtio drivers (chroot + dracut) when it lacks "
                     "them, so hostonly initramfs images built on VMware (RHEL/CentOS/Oracle Linux) boot in OCI. "
                     "Skipped for Windows and for guests without dracut; never fails the migration",

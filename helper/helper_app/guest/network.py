@@ -58,11 +58,11 @@ SELINUX_CONTEXTS = (
     ("", "system_u:object_r:etc_t:s0"),
 )
 
-NM_KEYFILE_TEXT = """# added by the OCI Ultimate Migration Tool
+NM_KEYFILE_TEXT = """# added by the OCI Offline Migration Assistant
 # The VMware profile is bound to the old interface name (ens192, ...) and its static address; in OCI
 # the primary VNIC's address is handed out by OCI's DHCP.  This profile matches any Ethernet device.
 [connection]
-id=OCI DHCP (OCI Ultimate Migration Tool)
+id=OCI DHCP (OCI Offline Migration Assistant)
 uuid={uuid}
 type=ethernet
 autoconnect=true
@@ -79,7 +79,7 @@ addr-gen-mode=stable-privacy
 """
 
 FIRSTBOOT_SCRIPT_TEXT = """#!/bin/sh
-# added by the OCI Ultimate Migration Tool (runs once, on the first boot in OCI)
+# added by the OCI Offline Migration Assistant (runs once, on the first boot in OCI)
 # The network interfaces have new names in OCI; the old ifcfg files (ifcfg-ens192, ...) match nothing.
 # Give every physical NIC that has no ifcfg file a DHCP configuration, then retire this unit.
 scripts=/etc/sysconfig/network-scripts
@@ -90,7 +90,7 @@ for dev in /sys/class/net/*; do
   cfg="$scripts/ifcfg-$name"
   [ -e "$cfg" ] && continue
   {
-    echo "# created by the OCI Ultimate Migration Tool on the first boot in OCI"
+    echo "# created by the OCI Offline Migration Assistant on the first boot in OCI"
     echo "TYPE=Ethernet"
     echo "DEVICE=$name"
     echo "NAME=$name"
@@ -109,9 +109,9 @@ systemctl disable {unit} >/dev/null 2>&1 || true
 exit 0
 """
 
-FIRSTBOOT_UNIT_TEXT = """# added by the OCI Ultimate Migration Tool
+FIRSTBOOT_UNIT_TEXT = """# added by the OCI Offline Migration Assistant
 [Unit]
-Description=OCI Ultimate Migration Tool: DHCP for the renamed network interfaces (first boot)
+Description=OCI Offline Migration Assistant: DHCP for the renamed network interfaces (first boot)
 DefaultDependencies=no
 After=local-fs.target systemd-udev-settle.service
 Wants=systemd-udev-settle.service
@@ -125,7 +125,7 @@ ExecStart=/{script}
 WantedBy=multi-user.target
 """
 
-NETPLAN_TEXT = """# added by the OCI Ultimate Migration Tool: DHCP on any Ethernet device (the name changed in OCI)
+NETPLAN_TEXT = """# added by the OCI Offline Migration Assistant: DHCP on any Ethernet device (the name changed in OCI)
 network:
   version: 2
   ethernets:
@@ -136,7 +136,7 @@ network:
       dhcp6: false
 """
 
-NETWORKD_TEXT = """# added by the OCI Ultimate Migration Tool: DHCP on any Ethernet device (the name changed in OCI)
+NETWORKD_TEXT = """# added by the OCI Offline Migration Assistant: DHCP on any Ethernet device (the name changed in OCI)
 [Match]
 Type=ether
 
@@ -147,7 +147,7 @@ DHCP=yes
 # Netplan generates /run/.../systemd-networkd-wait-online.service.d/10-netplan.conf that often lists eth0 plus
 # the real NIC; when eth0 does not exist, wait-online hits the 120s timeout and login on the serial console is delayed.
 WAIT_ONLINE_DROPIN = "99-oci-umt-wait-online.conf"
-WAIT_ONLINE_TEXT = """# added by the OCI Ultimate Migration Tool
+WAIT_ONLINE_TEXT = """# added by the OCI Offline Migration Assistant
 # Do not wait for every interface netplan names (often includes a missing eth0 on Azure Ubuntu images).
 [Service]
 ExecStart=
@@ -346,7 +346,7 @@ class NetworkFixer:
             self.note("SELinux labels set with setfattr (known contexts)")
             return
         (self.mnt / ".autorelabel").touch()
-        self.note("could not set SELinux labels from the migration tool VM; the guest relabels its file system "
+        self.note("could not set SELinux labels from the assistant VM; the guest relabels its file system "
                   "on the first boot (/.autorelabel, takes a few minutes)")
         self.changes.append("SELinux relabel scheduled for the first boot")
 

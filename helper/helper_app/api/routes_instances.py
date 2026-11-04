@@ -43,7 +43,7 @@ async def compartments(request: Request):
 
 @router.get("/instances", response_model=list[OciInstance], dependencies=[Depends(require_session)])
 async def instances(request: Request, compartment_id: Optional[str] = None):
-    """Instances of a compartment (the migration tool VM's when omitted)."""
+    """Instances of a compartment (the assistant VM's when omitted)."""
     st = request.app.state
     comp = compartment_id or st.clients.identity_info.compartment_id
 

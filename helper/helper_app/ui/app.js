@@ -1,4 +1,4 @@
-/* OCI Ultimate Migration Tool - web UI (no framework, hash routing). */
+/* OCI Offline Migration Assistant - web UI (no framework, hash routing). */
 (function () {
   "use strict";
 
@@ -978,7 +978,7 @@
       ["Instance", ocidLink("instances", job.instance_id)],
       ["State in OCI", ociStateEl(root, job)],
       ...sourceRows,
-      ["Shape", `${job.target.shape || "(migration tool default)"}${job.target.ocpus || job.target.memory_gb ? ` - ${job.target.ocpus ?? "auto"} OCPU / ${job.target.memory_gb ?? "auto"} GB${iso ? "" : " (custom)"}` : /^BM\./i.test(job.target.shape || "") ? " - bare metal, fixed cores and memory" : " - sized from the source VM"}`],
+      ["Shape", `${job.target.shape || "(assistant default)"}${job.target.ocpus || job.target.memory_gb ? ` - ${job.target.ocpus ?? "auto"} OCPU / ${job.target.memory_gb ?? "auto"} GB${iso ? "" : " (custom)"}` : /^BM\./i.test(job.target.shape || "") ? " - bare metal, fixed cores and memory" : " - sized from the source VM"}`],
       ["IP addresses", ociIpsEl(root, job)],
       ["Launch options", job.launch_options ? `${job.launch_options.firmware}${job.launch_options.secure_boot ? " + Secure Boot (shielded instance, with Measured Boot + vTPM on VM shapes)" : ""}, boot ${job.launch_options.boot_volume_type}, nic ${job.launch_options.network_type}` : "-"],
       ...(job.target.windows_license_type ? [["Windows license", job.target.windows_license_type === "OCI_PROVIDED"
@@ -2811,7 +2811,7 @@
         cadBtn.disabled = enterBtn.disabled = fkeySel.disabled = true; reconnectBtn.disabled = stopped;
         if (closing) return;
         setStatus(ev.detail.clean ? "Disconnected" : "Connection lost", false);
-        if (!ev.detail.clean) setError("The console connection dropped (the migration tool logs the reason; the instance may be rebooting or the tunnel was refused). Use Reconnect to try again.");
+        if (!ev.detail.clean) setError("The console connection dropped (the assistant logs the reason; the instance may be rebooting or the tunnel was refused). Use Reconnect to try again.");
       });
       rfb.addEventListener("securityfailure", (ev) => setError(`VNC security failure: ${ev.detail.reason || ev.detail.status}`));
       rfb.addEventListener("credentialsrequired", () => setError("The VNC server asked for credentials; the OCI console does not normally do this."));
@@ -2979,7 +2979,7 @@
       setStatus(`${list.length} instance${list.length === 1 ? "" : "s"} ${what}.`);
       for (const i of list) {
         const name = el("td", { class: "name" }, el("a", { href: consoleUrl("instances", i.id), target: "_blank", rel: "noopener", title: `${i.id}\nOpen in the OCI console` }, i.name));
-        if (i.job_id) name.append(" ", el("a", { href: `#/jobs/${i.job_id}`, class: "muted", title: "Created by this migration tool job" }, "(job)"));
+        if (i.job_id) name.append(" ", el("a", { href: `#/jobs/${i.job_id}`, class: "muted", title: "Created by this assistant job" }, "(job)"));
         rows.append(el("tr", {},
           name,
           el("td", {}, el("span", { class: `power ${i.lifecycle_state}` }, i.lifecycle_state)),
@@ -3010,7 +3010,7 @@
       return load(() => api("GET", `/instances/search?q=${encodeURIComponent(q)}`), `named like "${q}" (all compartments)`);
     };
 
-    // compartments first; the migration tool's own compartment is preselected (or the one chosen last time)
+    // compartments first; the assistant's own compartment is preselected (or the one chosen last time)
     let comps;
     try { comps = await api("GET", "/oci/compartments"); }
     catch (e) { if (e.status !== 401) setError(e.message); return; }
@@ -3083,10 +3083,10 @@
             const h = await r.json();
             if (h.commit && h.commit !== oldCommit) { swState.textContent = `Updated to ${short(h.commit)}; please log in again.`; setTimeout(showStart, 1500); return; }
           }
-        } catch (_) { swState.textContent = "The migration tool is restarting..."; }
+        } catch (_) { swState.textContent = "The assistant is restarting..."; }
         if (Date.now() - started > 15 * 60 * 1000) { swState.textContent = "The update is taking unusually long; check the update log or the service journal."; return; }
         const sw = await loadSoftware(false).catch(() => null);
-        if (sw) swState.textContent = "Update running; waiting for the migration tool to restart...";
+        if (sw) swState.textContent = "Update running; waiting for the assistant to restart...";
         if (sw && sw.log && /UPDATE FAILED/.test(sw.log.split("update started").pop())) { watching = false; renderSoftware(sw); swState.textContent = "The update failed; see the log."; return; }
         timer = setTimeout(tick, 3000);
       };
@@ -3099,7 +3099,7 @@
       const force = sw.active_jobs > 0;
       const msg = force
         ? `${sw.active_jobs} migration(s) are still running. Updating restarts the service and those jobs will fail. After login, open each failed job and cancel it to clean up OCI resources.\n\nUpdate anyway?`
-        : ((sw.update_available ? "Update the migration tool to the latest version from GitHub and restart the service?" : "Reinstall the current version and restart the service?")
+        : ((sw.update_available ? "Update the assistant to the latest version from GitHub and restart the service?" : "Reinstall the current version and restart the service?")
           + "\n\nAll users will have to log in again.");
       if (!confirm(msg)) return;
       swBtn.disabled = true; swErr.textContent = "";
@@ -3229,7 +3229,7 @@
     const purge = async (scope) => {
       const out = document.getElementById("jobs-purge-result");
       const what = scope === "failed" ? "all FAILED and CANCELLED jobs" : "ALL finished jobs (completed, failed and cancelled)";
-      if (!confirm(`Delete the records of ${what} from the migration tool?\n\n` +
+      if (!confirm(`Delete the records of ${what} from the assistant?\n\n` +
         "Running or queued jobs are kept. This only removes the job history: OCI resources a failed job may have " +
         "left behind (instance, volumes) are NOT cleaned up - use 'Clean up OCI resources' on such jobs first if needed.\n\n" +
         "This cannot be undone.")) return;
