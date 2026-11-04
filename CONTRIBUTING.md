@@ -1,7 +1,8 @@
 # Development
 
-Maintainer and contributor: [RichardORCL](https://github.com/RichardORCL).
-Use that identity for project contributions. Preserve existing license and third-party notices.
+Maintainer: [RichardORCL](https://github.com/RichardORCL).
+Use that identity for commits. Do not add `Co-authored-by` trailers for AI assistants (they pollute the GitHub
+contributor graph). Preserve existing license and third-party notices.
 
 ## Local setup
 

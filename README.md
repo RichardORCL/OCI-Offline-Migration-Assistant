@@ -72,7 +72,7 @@ port 8443. The full list of flows and ports is in
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, validation, dependency updates and stack packaging.
 
-Contributor: [RichardORCL](https://github.com/RichardORCL).
+Maintainer: [RichardORCL](https://github.com/RichardORCL).
 
 ## License
 
